@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="author" content="yazhoujiucaihezi" />
+<meta property="og:site_name" content="yazhoujiucaihezi" />
+<meta property="og:title" content="作业抓题助手 · 安装向导" />
+<meta property="og:description" content="识别浏览器，一键拉起篡改猴安装脚本。纯本地运行，不点提交。" />
+<title>安装向导 · 作业抓题助手</title>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #12151d;
+    --panel-2: #171c27;
+    --line: #232936;
+    --line-soft: #1c212c;
+    --text: #e8ebf3;
+    --dim: #9aa4ba;
+    --mute: #6a7387;
+    --accent: #6d8cff;
+    --accent-soft: rgba(109, 140, 255, .14);
+    --accent-line: rgba(109, 140, 255, .4);
+    --ok: #3fbf8f;
+    --warn: #e0a24a;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(900px 500px at 50% -260px, rgba(90, 120, 255, .16), transparent 70%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 42px 20px 80px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+
+  .top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    display: grid; place-items: center;
+    background: linear-gradient(150deg, #38456e, #22283a);
+    border: 1px solid #3c4663; color: #c9d6ff; font-size: 16px;
+  }
+  .top b { font-size: 14.5px; letter-spacing: .3px; }
+  .top .sp { flex: 1; }
+
+  .browser-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 12px; border-radius: 99px;
+    font-size: 12.5px; color: #cfd9f5;
+    background: rgba(109, 140, 255, .1);
+    border: 1px solid var(--accent-line);
+  }
+  .browser-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px rgba(63,191,143,.8); }
+  .browser-pill.warn { color: #e8c48a; background: rgba(224,162,74,.1); border-color: rgba(224,162,74,.32); }
+  .browser-pill.warn .dot { background: var(--warn); box-shadow: none; }
+
+  h1 { font-size: 30px; line-height: 1.3; margin: 22px 0 10px; letter-spacing: -.5px; font-weight: 650; }
+  .sub { font-size: 14px; line-height: 1.85; color: var(--dim); margin: 0 0 26px; }
+
+  .step {
+    display: grid; grid-template-columns: 34px 1fr; gap: 14px;
+    padding: 18px 18px 16px;
+    background: var(--panel);
+    border: 1px solid var(--line-soft);
+    border-radius: 15px;
+    margin-bottom: 12px;
+    transition: .2s ease;
+  }
+  .step.active { border-color: var(--accent-line); box-shadow: 0 0 0 3px rgba(109,140,255,.08); }
+
+  .num {
+    width: 28px; height: 28px; border-radius: 9px;
+    display: grid; place-items: center;
+    font-size: 13px; font-weight: 700;
+    color: #8fa4e8;
+    background: #1b2130; border: 1px solid #2b3446;
+    font-family: var(--mono);
+  }
+  .step.done .num { color: #0b1020; background: linear-gradient(180deg,#7fe0bd,#3fbf8f); border-color: transparent; }
+
+  .body h3 { margin: 0 0 6px; font-size: 14.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .body p { margin: 0 0 12px; font-size: 12.8px; line-height: 1.75; color: var(--dim); }
+  .body p:last-child { margin-bottom: 0; }
+
+  .tag {
+    font-size: 10.5px; padding: 2px 7px; border-radius: 5px;
+    color: var(--mute); background: rgba(255,255,255,.045);
+    border: 1px solid var(--line); font-weight: 400;
+  }
+  .tag.ok { color: #7fd3b3; background: rgba(63,191,143,.12); border-color: rgba(63,191,143,.28); }
+  .tag.warn { color: #e8c48a; background: rgba(224,162,74,.12); border-color: rgba(224,162,74,.28); }
+
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  a.btn, button.btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 16px;
+    font-size: 13px; font-weight: 600;
+    color: #0b1020; text-decoration: none;
+    background: linear-gradient(180deg, #a8bcff, #7d99ff);
+    border: 0; border-radius: 9px;
+    cursor: pointer; transition: .16s ease;
+    font-family: inherit;
+  }
+  a.btn:hover, button.btn:hover { filter: brightness(1.08); }
+  a.btn.ghost, button.btn.ghost {
+    color: var(--dim); background: transparent;
+    border: 1px solid var(--line); font-weight: 500;
+  }
+  a.btn.ghost:hover, button.btn.ghost:hover { color: var(--text); border-color: #333c50; background: var(--panel-2); filter: none; }
+  button.btn:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+
+  .hint { font-size: 11.5px; color: var(--mute); line-height: 1.7; margin-top: 10px; }
+  .hint code {
+    font-family: var(--mono); font-size: 11px; color: #a8b8e0;
+    background: #171c26; padding: 1px 5px; border-radius: 4px;
+  }
+
+  .bind-input {
+    width: 100%;
+    padding: 9px 11px;
+    font-size: 12.5px;
+    color: var(--text);
+    background: #0e1218;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    outline: none;
+    font-family: var(--mono);
+    transition: border-color .15s;
+  }
+  .bind-input:focus { border-color: var(--accent-line); }
+  .bind-input::placeholder { color: #4e576b; }
+
+  .bind-preview {
+    margin: 9px 0 11px;
+    padding: 8px 11px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: #8fa4d8;
+    background: #0e1218;
+    border: 1px dashed #2b3446;
+    border-radius: 8px;
+    word-break: break-all;
+  }
+  .bind-preview b { color: #a8bcff; font-weight: 600; }
+  .bind-preview .bad { color: #f0a4a4; border: 0; }
+
+  .note {
+    margin: 18px 0 0;
+    padding: 13px 15px;
+    font-size: 12.3px; line-height: 1.8;
+    color: #b7c0d6;
+    background: rgba(109, 140, 255, .06);
+    border: 1px solid rgba(109, 140, 255, .18);
+    border-left: 3px solid rgba(109, 140, 255, .8);
+    border-radius: 0 11px 11px 0;
+  }
+  .note b { color: #dbe2f2; }
+  .note code { font-family: var(--mono); font-size: 11px; color: #a8b8e0; background: #171c26; padding: 1px 5px; border-radius: 4px; }
+
+  details.faq {
+    margin-top: 12px;
+    background: var(--panel);
+    border: 1px solid var(--line-soft);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  details.faq summary {
+    padding: 13px 16px;
+    font-size: 13px; color: var(--dim);
+    cursor: pointer; list-style: none;
+    user-select: none;
+  }
+  details.faq summary::-webkit-details-marker { display: none; }
+  details.faq summary::before { content: "＋ "; color: var(--mute); }
+  details.faq[open] summary::before { content: "－ "; }
+  details.faq .inner { padding: 0 16px 14px; font-size: 12.5px; line-height: 1.85; color: var(--dim); }
+  details.faq .inner b { color: #dbe2f2; }
+
+  footer { margin-top: 34px; text-align: center; font-size: 11px; color: #444c5e; line-height: 1.8; }
+  footer a { color: #5f6b86; text-decoration: none; border-bottom: 1px solid rgba(109,140,255,.22); }
+  footer a:hover { color: #a8b8e0; border-bottom-color: rgba(109,140,255,.5); }
+
+  .gh-btn {
+    width: 32px; height: 32px; display: grid; place-items: center;
+    border-radius: 9px; color: var(--mute);
+    border: 1px solid transparent; transition: .15s ease;
+  }
+  .gh-btn:hover { color: var(--text); background: var(--panel-2); border-color: var(--line); }
+
+  .gh-pill {
+    position: fixed; left: 16px; bottom: 14px; z-index: 50;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 11px 6px 8px;
+    font-size: 11.5px; color: #5a6478;
+    background: rgba(18, 21, 29, .82);
+    border: 1px solid var(--line-soft);
+    border-radius: 99px;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    opacity: .55; transition: .2s ease;
+  }
+  .gh-pill:hover { opacity: 1; color: #cfd9f5; border-color: var(--accent-line); }
+  .gh-pill svg { width: 13px; height: 13px; flex: 0 0 13px; }
+
+  @media (max-width: 560px) {
+    body { padding: 26px 14px 60px; }
+    h1 { font-size: 24px; }
+    .step { grid-template-columns: 28px 1fr; gap: 11px; padding: 15px; }
+    .num { width: 24px; height: 24px; font-size: 12px; }
+    .gh-pill { opacity: .34; left: 10px; bottom: 10px; }
+  }
+  @media print { .gh-pill { display: none; } }
+
+  .flash {
+    position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(10px);
+    padding: 10px 18px; border-radius: 10px;
+    background: #1b2130; border: 1px solid #2f3a52;
+    color: #dfe6ff; font-size: 12.5px;
+    opacity: 0; pointer-events: none;
+    transition: .22s ease; z-index: 99;
+  }
+  .flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="logo">⚡</div>
+    <b>作业抓题助手 · 安装向导</b>
+    <span class="sp"></span>
+    <span class="browser-pill" id="browserPill"><i class="dot"></i><span>正在检测浏览器…</span></span>
+    <a class="gh-btn" href="https://github.com/yazhoujiucaihezi" target="_blank" rel="noopener" title="GitHub · yazhoujiucaihezi" aria-label="GitHub">
+      <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+    </a>
+  </div>
+
+  <h1>三步装好，<br/>然后去答题页按 ⚡</h1>
+  <p class="sub" id="lead">正在识别你的浏览器环境…</p>
+
+  <div class="step" id="step1">
+    <div class="num">1</div>
+    <div class="body">
+      <h3>安装篡改猴（Tampermonkey） <span class="tag" id="tmTag">检测中</span></h3>
+      <p id="tmDesc">篡改猴是用来跑脚本的浏览器扩展，装一次就行。</p>
+      <div class="btns">
+        <a class="btn" id="storeBtn" href="#" target="_blank" rel="noopener">去应用商店安装</a>
+        <button class="btn ghost" id="recheckBtn" type="button">重新检测</button>
+        <button class="btn ghost" id="skipBtn" type="button">已装好，跳过检测</button>
+      </div>
+      <div class="hint" id="tmHint"></div>
+    </div>
+  </div>
+
+  <div class="step" id="step2">
+    <div class="num">2</div>
+    <div class="body">
+      <h3>安装脚本 <span class="tag" id="verTag">读取中…</span></h3>
+      <p>点下面的按钮，浏览器会直接拉起篡改猴的安装确认页，点「安装」即可。<br/>装完之后打开作业页面，右下角会出现一个 <b>⚡</b>。</p>
+      <div class="btns">
+        <button class="btn" id="installBtn" type="button">一键安装脚本</button>
+        <button class="btn ghost" id="copyBtn" type="button">复制完整代码</button>
+        <button class="btn ghost" id="downloadBtn" type="button">下载 .user.js</button>
+      </div>
+      <div class="hint" id="installHint"></div>
+    </div>
+  </div>
+
+  <div class="step" id="bindCard">
+    <div class="num" style="font-size:14px">🔗</div>
+    <div class="body">
+      <h3>绑定页面 <span class="tag" id="bindTag">填一次即可</span></h3>
+      <p>输入你要用的页面地址，生成一条绑定链接。用它打开页面后，脚本会永久记住这个地址，<b>以后不用重装</b>。换页面重新生成一条就行。</p>
+      <input class="bind-input" id="bindUrl" type="text" spellcheck="false" placeholder="https://你的域名/路径/page   或   file:///D:/vibe-coding/homework-helper/exam.html" />
+      <div class="bind-preview" id="bindPreview">等待输入…</div>
+      <div class="btns">
+        <button class="btn" id="bindGo" type="button" disabled>打开并绑定</button>
+        <button class="btn ghost" id="bindCopy" type="button" disabled>复制链接</button>
+      </div>
+      <div class="hint" id="bindHint">未绑定的页面不会出现任何东西 —— 脚本不建节点、不读页面、不发请求。解绑请到目标页面的篡改猴菜单里点「✖ 解除绑定」。</div>
+    </div>
+  </div>
+
+  <div class="step" id="step3">
+    <div class="num">3</div>
+    <div class="body">
+      <h3>开始使用</h3>
+      <p>打开作业页面 → 点右下角 <b>⚡</b> → 「抓取本页题目」→「出答案」→「逐题自动填入」→ 核对后自己点提交。</p>
+      <div class="hint">第一次用要先在面板右上角 ⚙ 里填接口地址、API Key 和模型名，只存在本机。</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>关于"全自动安装"：</b>浏览器不允许网页直接安装扩展或脚本，这是 Chrome 和 Edge 的安全边界。任何声称"点一下就全部自动装好"的页面，要么在骗你，要么在让你关掉安全设置。这里做到的是把链路压到最短：识别你的浏览器 → 给对正确的商店 → 装完插件后一次点击拉起篡改猴的确认页，最后那一下"安装"必须你点。
+  </div>
+
+  <details class="faq">
+    <summary>点了「一键安装脚本」，浏览器直接下载了一个文件 / 显示一堆代码？</summary>
+    <div class="inner">说明<b>篡改猴还没装好</b>，或者装了但被禁用。回到第 1 步装好并启用扩展，再回来点一次。<br/>如果下载了文件，把它拖到浏览器的扩展管理页（<code>chrome://extensions</code>）也能触发安装。</div>
+  </details>
+
+  <details class="faq">
+    <summary>提示「无法从该网站添加应用」或商店打不开？</summary>
+    <div class="inner">Chrome 应用商店在国内无法直连，这是常态。三个办法：<br/>① 用 Edge 打开本页，Edge 加载项商店国内可直接访问；<br/>② 给 Chrome 配代理；<br/>③ 手动装：下载 <code>.crx</code> 后打开 <code>chrome://extensions</code>，开启「开发者模式」，把文件拖进去。</div>
+  </details>
+
+  <details class="faq">
+    <summary>第 1 步显示"未检测到"但我明明装了？</summary>
+    <div class="inner">正常。浏览器扩展默认对网页完全隐身，网页没有任何合法手段能读扩展列表。这里的检测只是尽力探测，<b>探测不到不代表没装</b>。只要第 2 步点下去能弹出篡改猴的安装页，就说明它是好的。</div>
+  </details>
+
+  <details class="faq">
+    <summary>脚本装了但作业页没有 ⚡？</summary>
+    <div class="inner">多半是域名不在 <code>@match</code> 列表里。在篡改猴管理面板点开这个脚本，在第 8 行附近加一行：<br/><code>// @match *://你的域名/*</code><br/>然后 Ctrl+S 保存，刷新页面。</div>
+  </details>
+
+  <details class="faq">
+    <summary>脚本会不会偷偷上传我的数据？</summary>
+    <div class="inner">不会。脚本只做三件事：读当前页面的题目文本、把你自己的 API Key 发给你填的那个 API 地址、点选项和写输入框。没有统计、没有回传、没有第三方域名。全部代码就在 <code>.user.js</code> 里，一百多行，可以直接翻。</div>
+  </details>
+
+  <footer>
+    <a href="https://github.com/yazhoujiucaihezi" target="_blank" rel="noopener">GitHub · yazhoujiucaihezi</a><br/>
+    纯本地运行 · API Key 只存在你浏览器里<br/>
+    仅供自有页面测试 · 使用后果由使用者自行承担<br/>
+    作业抓题助手 v1.3.0
+  </footer>
+</div>
+
+<a class="gh-pill" href="https://github.com/yazhoujiucaihezi" target="_blank" rel="noopener" title="https://github.com/yazhoujiucaihezi">
+  <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+  <span>@yazhoujiucaihezi</span>
+</a>
+
+<div class="flash" id="flash"></div>
+
+<!-- 脚本源码内联在这里，页面不依赖任何外部文件，双击打开也能用 -->
+<script type="text/plain" id="userscript-src">
+// ==UserScript==
+// @name         作业抓题助手 · 抓题 + 自动填入
+// @namespace    https://github.com/yazhoujiucaihezi
+// @version      1.4.0
+// @description  一键抓取作业页面的全部题目，自动填入选项和作答框。不点提交。
+// @author       yazhoujiucaihezi
+// @homepageURL  https://github.com/yazhoujiucaihezi
+// @supportURL   https://github.com/yazhoujiucaihezi
+// @match        *://*/*
+// @match        file:///*
+// @grant        GM_xmlhttpRequest
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @grant        GM_registerMenuCommand
+// @connect      *
+// @run-at       document-start
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  /* ============================================================
+     页面绑定
+     只在你绑定的页面上工作；未绑定或未命中时，脚本不创建任何节点、
+     不读页面、不发请求，直接退出。
+     ============================================================ */
+
+  const BIND_KEY = 'hh_bind_v1';
+
+  function bindGet() {
+    try {
+      if (typeof GM_getValue === 'function') return GM_getValue(BIND_KEY) || null;
+      const raw = localStorage.getItem(BIND_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function bindSet(v) {
+    try {
+      if (typeof GM_setValue === 'function') GM_setValue(BIND_KEY, v);
+      else if (v) localStorage.setItem(BIND_KEY, JSON.stringify(v));
+      else localStorage.removeItem(BIND_KEY);
+    } catch (e) {}
+  }
+
+  /** 只接受 http(s) 与 file，去掉 hash，拒绝纯通配 */
+  function validPrefix(p) {
+    const s = String(p == null ? '' : p).trim();
+    if (!s || s.length > 400) return '';
+    if (!/^(https?|file):\/\//i.test(s)) return '';
+    if (/^\*/.test(s)) return '';
+    return s.split('#')[0];
+  }
+
+  function globToRe(p) {
+    const esc = p.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+    return new RegExp('^' + esc + '$', 'i');
+  }
+
+  function hitBind(url, prefix) {
+    if (!prefix) return false;
+    if (prefix.indexOf('*') < 0) return url.indexOf(prefix) === 0;
+    return globToRe(prefix).test(url);
+  }
+
+  function suggestPrefix() {
+    const href = location.href.split('#')[0].split('?')[0];
+    const i = href.lastIndexOf('/');
+    return (i > 8 ? href.slice(0, i) : href) + '/*';
+  }
+
+  function setupBinding() {
+    // 处理地址栏里的绑定 / 解绑指令
+    try {
+      const h = location.hash || '';
+      if (h.indexOf('#hh-unbind') === 0) {
+        bindSet(null);
+        history.replaceState(null, '', location.href.split('#')[0]);
+      } else if (h.indexOf('#hh-bind=') === 0) {
+        const p = validPrefix(decodeURIComponent(atob(decodeURIComponent(h.slice('#hh-bind='.length)))));
+        if (p) bindSet({ prefix: p, at: Date.now() });
+        history.replaceState(null, '', location.href.split('#')[0]);
+      }
+    } catch (e) {}
+
+    // 任何页面都能通过篡改猴菜单绑定 / 解绑
+    try {
+      if (typeof GM_registerMenuCommand === 'function') {
+        GM_registerMenuCommand('⚡ 绑定当前页面', function () {
+          const cur = bindGet();
+          const input = prompt('绑定到哪个地址前缀？（结尾可用 * 表示任意）', cur && cur.prefix ? cur.prefix : suggestPrefix());
+          if (input === null) return;
+          const p = validPrefix(input);
+          if (!p) {
+            alert('地址无效：必须以 http:// 、https:// 或 file:// 开头');
+            return;
+          }
+          bindSet({ prefix: p, at: Date.now() });
+          location.reload();
+        });
+        GM_registerMenuCommand('✖ 解除绑定', function () {
+          if (!confirm('解除后脚本在所有页面都会停止工作，确定？')) return;
+          bindSet(null);
+          location.reload();
+        });
+      }
+    } catch (e) {}
+
+    const b = bindGet();
+    return { bind: b, active: !!(b && b.prefix && hitBind(location.href, b.prefix)) };
+  }
+
+  const BIND = setupBinding();
+
+  // 未绑定 / 未命中：到此为止，下面一行都不会执行
+  if (!BIND.active) return;
+
+  /* ============================================================
+     配置
+     ============================================================ */
+
+  const DEFAULTS = {
+    baseUrl: '',
+    apiKey: '',
+    model: '',
+  };
+
+  const Store = {
+    get(key, fallback) {
+      try {
+        if (typeof GM_getValue === 'function') {
+          const v = GM_getValue(key);
+          return v === undefined || v === null ? fallback : v;
+        }
+        const raw = localStorage.getItem('hh_' + key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    },
+    set(key, value) {
+      try {
+        if (typeof GM_setValue === 'function') GM_setValue(key, value);
+        else localStorage.setItem('hh_' + key, JSON.stringify(value));
+      } catch (e) {}
+    },
+  };
+
+  function cleanKey(s) {
+    return String(s == null ? '' : s)
+      .trim()
+      .replace(/^['"`\s]+|['"`\s]+$/g, '')
+      .replace(/\s+/g, '');
+  }
+  function cleanBase(s) {
+    return String(s == null ? '' : s).trim().replace(/\/+$/, '');
+  }
+
+  let cfg = Object.assign({}, DEFAULTS, Store.get('cfg', {}));
+  cfg.apiKey = cleanKey(cfg.apiKey);
+  cfg.baseUrl = cleanBase(cfg.baseUrl);
+  let questions = [];
+  let answers = [];
+  let fillStatus = {};
+  let busy = false;
+
+  /* ============================================================
+     题目解析
+     ============================================================ */
+
+  const TYPE_RE = /(不定项选择题|多选题|单选题|判断题|填空题|简答题|计算题|论述题|名词解释|分析题|综合题|编程题|翻译题|写作题|选择题)/;
+  const HEAD_RE = /^\s*(\d{1,3})\s*[.、．]\s*[（(]\s*([^)）]{1,24}?)\s*[)）]\s*(.*)$/;
+  const SECTION_RE = /^[一二三四五六七八九十]+\s*[、.．]\s*([^\s（(]{2,12})/;
+
+  function parseQuestions(rawText) {
+    const text = String(rawText || '').replace(/\r/g, '').replace(/\u00a0/g, ' ');
+    const lines = text.split('\n').map((s) => s.trim());
+    const out = [];
+    let cur = null;
+    let sectionType = '';
+
+    const push = () => {
+      if (cur && cur.stem && cur.stem.length > 2) out.push(cur);
+      cur = null;
+    };
+
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+      if (!line) continue;
+
+      // 分节标题：一、判断题（共3题，18分）
+      const sec = line.match(SECTION_RE);
+      if (sec && TYPE_RE.test(sec[1]) && line.length < 40) {
+        sectionType = sec[1].match(TYPE_RE)[0];
+        continue;
+      }
+
+      // 「1.」单独一行、下一行才是「(判断题, 6分)」
+      if (/^\d{1,3}\s*[.、．]$/.test(line) && lines[i + 1] && /^[（(]/.test(lines[i + 1])) {
+        line = line + lines[i + 1];
+        i++;
+      }
+
+      const m = line.match(HEAD_RE);
+      if (m) {
+        push();
+        const meta = m[2];
+        const tm = meta.match(TYPE_RE);
+        cur = {
+          no: m[1],
+          type: tm ? tm[0] : sectionType || '',
+          stem: (m[3] || '').trim(),
+          options: [],
+        };
+        continue;
+      }
+
+      if (!cur) continue;
+
+      // 右侧题号导航（"1 2 3"）、按钮文字等噪声
+      if (/^[\d\s]+$/.test(line)) continue;
+      if (/^(暂时保存|提交|保存|已保存|上一题|下一题|返回|收起|展开)$/.test(line)) continue;
+
+      // 选项：A 对 / A. 对 / A、对
+      const om = line.match(/^([A-H])\s*[.、．]?\s+(.{1,90})$/);
+      if (om && line.length <= 100 && cur.options.length < 12) {
+        cur.options.push(om[1] + '. ' + om[2].trim());
+        continue;
+      }
+      const om2 = line.match(/^([A-H])\s*[.、．]\s*(.{1,90})$/);
+      if (om2 && cur.options.length < 12) {
+        cur.options.push(om2[1] + '. ' + om2[2].trim());
+        continue;
+      }
+
+      // 兜底：题型确定的短行，可能是不带分隔符的选项（A对）
+      const isChoice = /判断|单选|多选/.test(cur.type);
+      const om3 = line.match(/^([A-H])([^\sA-Za-z].{0,60})$/);
+      if (isChoice && om3 && cur.options.length < 12 && line.length <= 40) {
+        cur.options.push(om3[1] + '. ' + om3[2].trim());
+        continue;
+      }
+
+      if (/^(请输入|点击输入|作答区|上传附件|暂无内容|收起)$/.test(line)) continue;
+      if (cur.stem.length < 600) cur.stem = cur.stem ? cur.stem + ' ' + line : line;
+    }
+
+    push();
+    return out;
+  }
+
+  function questionsToText(list) {
+    return list
+      .map((q) => {
+        const head = q.no + '.（' + (q.type || '题目') + '）';
+        const lines = [head, q.stem];
+        q.options.forEach((o) => lines.push(o));
+        return lines.join('\n');
+      })
+      .join('\n\n');
+  }
+
+  /** 从页面抓取：DOM 容器优先，失败后回退到正文文本解析 */
+  function captureFromPage() {
+    const text = pickContentText();
+    return parseQuestions(text);
+  }
+
+  function textOf(node) {
+    if (!node) return '';
+    if (typeof node.innerText === 'string' && node.innerText) return node.innerText;
+    return node.textContent || '';
+  }
+
+  function pickContentText() {
+    const candidates = [
+      '#content', '.content', '.main', '#main', '.questionWrap',
+      '.mark_content', '.exam-content', '.answer-content', '.subject',
+    ];
+    let best = null;
+    let bestScore = 0;
+
+    candidates.forEach((sel) => {
+      document.querySelectorAll(sel).forEach((node) => {
+        const t = textOf(node);
+        const score = (t.match(/[（(]\s*(判断题|单选题|多选题|填空题|简答题)/g) || []).length * 100 + t.length / 500;
+        if (score > bestScore) {
+          bestScore = score;
+          best = node;
+        }
+      });
+    });
+
+    if (best && bestScore >= 100) return textOf(best);
+    return textOf(document.body);
+  }
+
+  /* ============================================================
+     答案解析
+     ============================================================ */
+
+  function normalizeAnswers(arr) {
+    const out = [];
+    arr.forEach((o, i) => {
+      if (!o || typeof o !== 'object') return;
+      const answer = o.answer != null ? String(o.answer) : o.ans != null ? String(o.ans) : '';
+      out.push({
+        no: String(o.no != null ? o.no : i + 1).trim(),
+        type: String(o.type || o.kind || '').trim(),
+        answer: answer.trim(),
+        point: String(o.point || '').trim(),
+      });
+    });
+    return out;
+  }
+
+  function balancedJsonSlice(s) {
+    const start = s.indexOf('{');
+    if (start < 0) return null;
+    let depth = 0;
+    let inStr = false;
+    let esc = false;
+    for (let i = start; i < s.length; i++) {
+      const ch = s[i];
+      if (inStr) {
+        if (esc) esc = false;
+        else if (ch === '\\') esc = true;
+        else if (ch === '"') inStr = false;
+        continue;
+      }
+      if (ch === '"') inStr = true;
+      else if (ch === '{') depth++;
+      else if (ch === '}') {
+        depth--;
+        if (depth === 0) return s.slice(start, i + 1);
+      }
+    }
+    return null;
+  }
+
+  function parseAnswers(text) {
+    let s = String(text || '').trim();
+    const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fence) s = fence[1].trim();
+
+    const slice = balancedJsonSlice(s);
+    if (slice) {
+      try {
+        const obj = JSON.parse(slice);
+        const arr = Array.isArray(obj) ? obj : obj.answers || obj.data || obj.list;
+        if (Array.isArray(arr)) return normalizeAnswers(arr);
+      } catch (e) {}
+    }
+
+    // 抢救：逐个大括号解析
+    const out = [];
+    const re = /\{[^{}]*\}/g;
+    let m;
+    while ((m = re.exec(s))) {
+      try {
+        const o = JSON.parse(m[0]);
+        if (o && (o.no != null || o.answer != null)) out.push(o);
+      } catch (e) {}
+    }
+    return out.length ? normalizeAnswers(out) : [];
+  }
+
+  /* ============================================================
+     API
+     ============================================================ */
+
+  function buildPrompt(list) {
+    const body = questionsToText(list);
+    return [
+      {
+        role: 'system',
+        content: [
+          '你是一位阅卷老师。学生会给你一次在线作业的全部题目，你要全部做完。',
+          '',
+          '只输出一个 json 对象，不要任何其他文字：',
+          '{"answers":[{"no":"1","type":"判断题","answer":"对","point":"逻辑门电平"}]}',
+          '',
+          '字段规则：',
+          '- no：题号，必须与原文完全一致，不要重排。',
+          '- type：判断题 / 单选题 / 多选题 / 填空题 / 简答题 / 计算题 之一。',
+          '- answer：',
+          '  · 判断题 → 只写 对 或 错',
+          '  · 单选 → 只写一个大写字母',
+          '  · 多选 → 字母按字母序连写，如 ABD',
+          '  · 填空 → 只写要填的内容，多个空用 ①②③ 标注',
+          '  · 简答 / 计算 → 写可以整段交上去的答案，分点陈述，150 字以内，公式用 $...$ 包裹',
+          '- point：考点，8 个字以内。',
+          '',
+          '硬性要求：题目数量与顺序必须和原文一致，不能漏题、不能加题、不能反问我。',
+        ].join('\n'),
+      },
+      { role: 'user', content: body },
+    ];
+  }
+
+  /** 把服务端错误翻译成能照着做的提示 */
+  function apiError(status, text, c) {
+    const detail = String(text || '').slice(0, 240);
+    const err = new Error('');
+    const tail = '<div style="margin-top:6px;color:#8b93a8;font-size:11px;word-break:break-all;">服务端返回：' + escape2(detail) + '</div>';
+
+    if (status === 401) {
+      err.message = 'API Key 被拒绝了（401）';
+      err.hint =
+        '这不是网络问题，是 Key 本身无效或已失效。<br>' +
+        '① 到接口提供方重新生成一个 Key，整段复制（<b>sk-</b> 开头）；<br>' +
+        '② 粘贴时不要带空格、引号、换行；<br>' +
+        '③ 确认 Key 和 Base URL 是同一家服务的；<br>' +
+        '④ 改完点「测试连接」验证，通过了再答题。' + tail;
+      return err;
+    }
+    if (status === 402) {
+      err.message = '账户余额不足（402）';
+      err.hint = '账户没有余额了，充值后再试，或换一个可用的 Key。' + tail;
+      return err;
+    }
+    if (status === 403) {
+      err.message = '没有权限（403）';
+      err.hint = 'Key 有效但无权访问 <b>' + escape2(c.model) + '</b>，检查模型名是否写错。' + tail;
+      return err;
+    }
+    if (status === 404) {
+      err.message = '接口地址或模型不存在（404）';
+      err.hint = 'Base URL 应该是 <b>' + escape2(c.baseUrl) + '</b>，一般以 <code>/v1</code> 结尾；模型名要填完整。' + tail;
+      return err;
+    }
+    if (status === 429) {
+      err.message = '请求太频繁（429）';
+      err.hint = '等十几秒再试，或者降低并发。' + tail;
+      return err;
+    }
+    if (status >= 500) {
+      err.message = '服务端出错（HTTP ' + status + '）';
+      err.hint = '接口那边的问题，过一会儿再试。' + tail;
+      return err;
+    }
+
+    err.message = '请求失败（HTTP ' + status + '）';
+    err.hint = tail;
+    return err;
+  }
+
+  function escape2(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function requestCompletion(messages, override, opts) {
+    const c = override || cfg;
+    const url = cleanBase(c.baseUrl) + '/chat/completions';
+    const payload = {
+      model: c.model,
+      messages,
+      stream: false,
+      temperature: 0,
+    };
+    if (!(opts && opts.noJson)) payload.response_format = { type: 'json_object' };
+    const body = JSON.stringify(payload);
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + cleanKey(c.apiKey),
+    };
+
+    return new Promise((resolve, reject) => {
+      if (typeof GM_xmlhttpRequest === 'function') {
+        GM_xmlhttpRequest({
+          method: 'POST',
+          url,
+          headers,
+          data: body,
+          timeout: 120000,
+          onload(res) {
+            if (res.status < 200 || res.status >= 300) {
+              reject(apiError(res.status, res.responseText, c));
+              return;
+            }
+            try {
+              const json = JSON.parse(res.responseText);
+              const cc = json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content;
+              resolve(cc || '');
+            } catch (e) {
+              reject(new Error('返回内容不是合法 JSON'));
+            }
+          },
+          onerror() { reject(new Error('网络错误：连不上 ' + url)); },
+          ontimeout() { reject(new Error('请求超时（120s）')); },
+        });
+        return;
+      }
+
+      fetch(url, { method: 'POST', headers, body })
+        .then((r) => (r.ok ? r.json() : r.text().then((t) => Promise.reject(apiError(r.status, t, c)))))
+        .then((j) => resolve((j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || ''))
+        .catch(reject);
+    });
+  }
+
+  /* ============================================================
+     界面
+     ============================================================ */
+
+  const STYLE = `
+  :host { all: initial; }
+  * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+
+  .pill {
+    position: fixed; right: 22px; bottom: 26px; z-index: 2147483000;
+    width: 46px; height: 46px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: #1b2340; color: #cfdaff;
+    border: 1px solid #3d4a72;
+    box-shadow: 0 8px 26px rgba(0,0,0,.28);
+    cursor: pointer; font-size: 19px;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .pill:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,0,0,.34); }
+
+  .panel {
+    position: fixed; right: 22px; bottom: 82px; z-index: 2147483001;
+    width: 400px; max-height: 74vh;
+    display: flex; flex-direction: column;
+    background: #12151d; color: #e8ebf3;
+    border: 1px solid #262d3d; border-radius: 14px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.45);
+    overflow: hidden; font-size: 13px;
+  }
+  .panel[hidden] { display: none; }
+
+  header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 12px; border-bottom: 1px solid #1f2532;
+    background: #151923;
+  }
+  header b { font-size: 13.5px; font-weight: 600; letter-spacing: .2px; }
+  header .dot { width: 6px; height: 6px; border-radius: 50%; background: #4a5265; }
+  header .dot.ok { background: #3fbf8f; box-shadow: 0 0 8px rgba(63,191,143,.7); }
+  header .sp { flex: 1; }
+
+  .ibtn {
+    width: 26px; height: 26px; display: grid; place-items: center;
+    border: 1px solid transparent; border-radius: 7px;
+    background: transparent; color: #7b8499; cursor: pointer; font-size: 14px;
+  }
+  .ibtn:hover { background: #1c2230; color: #e8ebf3; }
+
+  .body { padding: 11px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 9px; }
+
+  .row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+  button.act {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 7px 12px; font-size: 12.5px; font-weight: 500;
+    color: #c9d3ea; background: #1b2130;
+    border: 1px solid #2b3446; border-radius: 8px;
+    cursor: pointer; transition: .15s ease;
+  }
+  button.act:hover { background: #222a3c; border-color: #3a4763; color: #fff; }
+  button.act.primary { color: #0b1020; background: linear-gradient(180deg,#a8bcff,#7d99ff); border-color: transparent; font-weight: 600; }
+  button.act.primary:hover { filter: brightness(1.08); }
+  button.act.hot { color: #cfdaff; background: rgba(109,140,255,.13); border-color: rgba(109,140,255,.45); font-weight: 600; }
+  button.act.hot:hover { background: rgba(109,140,255,.22); color: #fff; }
+  button.act:disabled { opacity: .45; cursor: not-allowed; }
+
+  .meta { font-size: 11.5px; color: #6a7387; margin-left: auto; }
+
+  textarea {
+    width: 100%; height: 168px; resize: vertical;
+    padding: 10px 11px; font-size: 12.5px; line-height: 1.7;
+    color: #dbe2f2; background: #0c1017;
+    border: 1px solid #242c3c; border-radius: 9px;
+    outline: none; font-family: ui-monospace, Menlo, Consolas, monospace;
+  }
+  textarea:focus { border-color: rgba(109,140,255,.5); }
+
+  .answers { display: flex; flex-direction: column; gap: 6px; }
+
+  .arow {
+    display: grid; grid-template-columns: 26px minmax(48px,auto) 1fr auto auto;
+    align-items: center; gap: 9px;
+    padding: 8px 10px; border-radius: 9px;
+    background: #171c27; border: 1px solid #232b3a;
+  }
+  .arow .no { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; color: #6a7387; text-align: right; }
+  .arow .ans { font-size: 14px; font-weight: 650; color: #fff; }
+  .arow .ans.blank { color: #ef6b6b; font-size: 12px; font-weight: 500; }
+  .arow .pt { font-size: 11px; color: #5f6a80; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .arow .cp { font-size: 11px; color: #7b8499; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
+  .arow .cp:hover { background: #232b3a; color: #fff; }
+  .arow .cp.fill { color: #9fb4ff; border: 1px solid rgba(109,140,255,.35); }
+  .arow .cp.fill:hover { background: rgba(109,140,255,.16); color: #fff; }
+
+  .ablock { display: flex; flex-direction: column; gap: 6px; padding: 9px 10px; border-radius: 9px; background: #171c27; border: 1px solid #232b3a; }
+  .ablock .top { display: flex; align-items: center; gap: 8px; }
+  .ablock .no { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; color: #6a7387; }
+  .ablock .txt { font-size: 12.5px; line-height: 1.75; color: #dbe2f2; white-space: pre-wrap; }
+
+  .warn { font-size: 11.5px; line-height: 1.6; color: #e8c48a; background: rgba(224,162,74,.09); border: 1px solid rgba(224,162,74,.24); border-radius: 8px; padding: 7px 10px; }
+  .err { font-size: 12px; line-height: 1.65; color: #f3b6b6; background: rgba(239,107,107,.09); border: 1px solid rgba(239,107,107,.26); border-radius: 8px; padding: 8px 10px; word-break: break-word; }
+
+  footer {
+    padding: 8px 12px; border-top: 1px solid #1f2532;
+    font-size: 11px; color: #4f586b; text-align: center; background: #10131a;
+  }
+
+  .settings { padding: 12px; display: flex; flex-direction: column; gap: 9px; }
+  .settings[hidden] { display: none; }
+  .settings label { font-size: 11.5px; color: #9aa4ba; }
+  .settings input {
+    width: 100%; padding: 7px 9px; font-size: 12.5px;
+    color: #e8ebf3; background: #0c1017;
+    border: 1px solid #242c3c; border-radius: 7px; outline: none;
+  }
+  .settings input:focus { border-color: rgba(109,140,255,.5); }
+  .settings .hint { font-size: 10.5px; color: #525b6e; line-height: 1.55; }
+
+  .spin { display: inline-block; width: 12px; height: 12px; border: 2px solid #3a4360; border-top-color: #8ba6ff; border-radius: 50%; animation: sp .7s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  .tr { font-size: 11.5px; line-height: 1.75; color: #9aa4ba; display: none; word-break: break-word; }
+  .tr.show { display: block; }
+  .tr.ok { color: #7fd3b3; }
+  .tr.bad { color: #f0a4a4; }
+
+  .chk { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: #7b8499; cursor: pointer; user-select: none; }
+  .chk input { width: 13px; height: 13px; accent-color: #6d8cff; margin: 0; cursor: pointer; }
+
+  .badge { font-size: 10.5px; padding: 1px 5px; border-radius: 4px; margin-right: 2px; white-space: nowrap; }
+  .badge.ok { color: #7fd3b3; background: rgba(63,191,143,.14); }
+  .badge.bad { color: #f0a4a4; background: rgba(239,107,107,.14); }
+  `;
+
+  const host = document.createElement('div');
+  host.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2147483000;';
+  const shadow = host.attachShadow({ mode: 'open' });
+
+  const styleEl = document.createElement('style');
+  styleEl.textContent = STYLE;
+  shadow.appendChild(styleEl);
+
+  const pill = document.createElement('div');
+  pill.className = 'pill';
+  pill.style.pointerEvents = 'auto';
+  pill.title = '作业抓题助手';
+  pill.textContent = '⚡';
+  shadow.appendChild(pill);
+
+  const panel = document.createElement('div');
+  panel.className = 'panel';
+  panel.hidden = true;
+  panel.style.pointerEvents = 'auto';
+  panel.innerHTML = [
+    '<header>',
+    '  <i class="dot"></i>',
+    '  <b>作业抓题助手</b>',
+    '  <span class="sp"></span>',
+    '  <button class="ibtn" data-act="settings" title="设置">⚙</button>',
+    '  <button class="ibtn" data-act="hide" title="收起">✕</button>',
+    '</header>',
+    '<div class="body" data-view="main">',
+    '  <div class="row">',
+    '    <button class="act primary" data-act="capture">抓取本页题目</button>',
+    '    <button class="act" data-act="copyq">复制题目</button>',
+    '    <span class="meta" data-role="meta">未抓取</span>',
+    '  </div>',
+    '  <textarea data-role="qs" placeholder="点「抓取本页题目」自动读题，也可以手动粘贴题目。每题的格式：&#10;1.（判断题）&#10;题干&#10;A. 对&#10;B. 错"></textarea>',
+    '  <div class="row">',
+    '    <button class="act primary" data-act="solve">出答案</button>',
+    '    <button class="act hot" data-act="fill">逐题自动填入</button>',
+    '    <button class="act" data-act="copya">复制答案</button>',
+    '    <span class="meta" data-role="status"></span>',
+    '  </div>',
+    '  <div class="row">',
+    '    <label class="chk"><input type="checkbox" data-role="autoscroll" checked> 填完自动滚到下一题</label>',
+    '    <button class="act" data-act="diag" style="margin-left:auto">识别诊断</button>',
+    '  </div>',
+    '  <div class="answers" data-role="answers"></div>',
+    '</div>',
+    '<div class="settings" data-view="settings" hidden>',
+    '  <label>Base URL</label>',
+    '  <input data-cfg="baseUrl" spellcheck="false" placeholder="https://your-endpoint/v1">',
+    '  <label>API Key</label>',
+    '  <input data-cfg="apiKey" type="password" spellcheck="false" placeholder="sk-...">',
+    '  <label>模型</label>',
+    '  <input data-cfg="model" spellcheck="false" placeholder="your-model">',
+    '  <div class="row">',
+    '    <button class="act primary" data-act="savecfg">保存</button>',
+    '    <button class="act" data-act="test">测试连接</button>',
+    '    <button class="act" data-act="back">返回</button>',
+    '  </div>',
+    '  <div class="tr" data-role="testresult"></div>',
+    '  <div class="hint">当前绑定：<b>' + escape2((BIND.bind && BIND.bind.prefix) || '未绑定') + '</b></div>',
+    '  <div class="row">',
+    '    <button class="act" data-act="unbind">解除绑定（所有页面停止工作）</button>',
+    '  </div>',
+    '  <div class="hint">Key 只存在本机脚本存储里。未绑定的页面不会出现任何东西。</div>',
+    '</div>',
+    '<footer>自动逐题填入 · 不点提交 · 单题也可手动点「填入」</footer>',
+  ].join('');
+  shadow.appendChild(panel);
+
+  const $ = (sel) => shadow.querySelector(sel);
+  const qsEl = $('[data-role="qs"]');
+  const answersEl = $('[data-role="answers"]');
+  const metaEl = $('[data-role="meta"]');
+  const statusEl = $('[data-role="status"]');
+
+  /* ---------------- 渲染 ---------------- */
+
+  function setMeta(text) { metaEl.textContent = text; }
+  function setStatus(html, spinning) {
+    statusEl.innerHTML = (spinning ? '<span class="spin"></span> ' : '') + html;
+  }
+
+  function renderAnswers() {
+    answersEl.innerHTML = '';
+    if (!answers.length) return;
+
+    answers.forEach((a) => {
+      const long = a.answer && (a.answer.length > 18 || /简答|论述|计算|分析|名词解释/.test(a.type));
+
+      if (long) {
+        const box = document.createElement('div');
+        box.className = 'ablock';
+
+        const top = document.createElement('div');
+        top.className = 'top';
+
+        const no = document.createElement('span');
+        no.className = 'no';
+        no.textContent = a.no + '.';
+
+        const type = document.createElement('span');
+        type.className = 'pt';
+        type.textContent = a.type || '';
+
+        const sp = document.createElement('span');
+        sp.style.flex = '1';
+
+        const cpSlot = document.createElement('span');
+        cpSlot.style.display = 'flex';
+        cpSlot.style.gap = '8px';
+
+        const longFill = document.createElement('span');
+        longFill.className = 'cp';
+        longFill.textContent = '填入';
+        longFill.addEventListener('click', (e) => { e.stopPropagation(); fillOne(a); });
+
+        const cp = document.createElement('span');
+        cp.className = 'cp';
+        cp.textContent = '复制';
+        cp.addEventListener('click', () => copy(a.answer, cp));
+
+        cpSlot.appendChild(longFill);
+        cpSlot.appendChild(cp);
+
+        top.appendChild(no);
+        top.appendChild(type);
+        const st = fillStatus[a.no];
+        if (st) {
+          const b = document.createElement('span');
+          b.className = 'badge ' + (st.ok ? 'ok' : 'bad');
+          b.textContent = st.ok ? '已填' : st.reason || '未填';
+          top.appendChild(b);
+        }
+        top.appendChild(sp);
+        top.appendChild(cpSlot);
+
+        const txt = document.createElement('div');
+        txt.className = 'txt';
+        txt.textContent = a.answer || '（空）';
+
+        box.appendChild(top);
+        box.appendChild(txt);
+        answersEl.appendChild(box);
+        return;
+      }
+
+      const row = document.createElement('div');
+      row.className = 'arow';
+
+      const no = document.createElement('span');
+      no.className = 'no';
+      no.textContent = a.no;
+
+      const ans = document.createElement('span');
+      ans.className = 'ans' + (!a.answer || /存疑/.test(a.answer) ? ' blank' : '');
+      ans.textContent = a.answer || '存疑';
+
+      const pt = document.createElement('span');
+      pt.className = 'pt';
+      const st = fillStatus[a.no];
+      if (st) {
+        const b = document.createElement('span');
+        b.className = 'badge ' + (st.ok ? 'ok' : 'bad');
+        b.textContent = st.ok ? '已填' : st.reason || '未填';
+        pt.appendChild(b);
+      }
+      pt.appendChild(document.createTextNode(a.point || ''));
+      pt.title = (a.type || '') + ' ' + (a.point || '');
+
+      const cp = document.createElement('span');
+      cp.className = 'cp';
+      cp.textContent = '复制';
+      cp.addEventListener('click', (e) => {
+        e.stopPropagation();
+        copy(a.answer, cp);
+      });
+
+      const fillBtn = document.createElement('span');
+      fillBtn.className = 'cp fill';
+      fillBtn.textContent = '填入';
+      fillBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fillOne(a);
+      });
+
+      row.appendChild(no);
+      row.appendChild(ans);
+      row.appendChild(pt);
+      row.appendChild(fillBtn);
+      row.appendChild(cp);
+      row.addEventListener('click', () => jumpTo(a.no));
+      answersEl.appendChild(row);
+    });
+  }
+
+  function copy(text, elNode) {
+    const done = () => {
+      if (!elNode) return;
+      const old = elNode.textContent;
+      elNode.textContent = '✓';
+      setTimeout(() => { elNode.textContent = old; }, 1100);
+    };
+    try {
+      navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+    } catch (e) {
+      fallbackCopy(text, done);
+    }
+  }
+
+  function fallbackCopy(text, done) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0;';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    ta.remove();
+  }
+
+  /** 滚到页面上对应的那道题（只是滚动，不点任何东西） */
+  function jumpTo(no) {
+    const blocks = document.querySelectorAll('.TiMu, .questionLi, .mark_item, .questionItem');
+    let target = null;
+
+    for (const b of blocks) {
+      const t = (b.innerText || '').trim();
+      if (new RegExp('^\\s*' + no + '\\s*[.、．]').test(t)) { target = b; break; }
+    }
+
+    if (!target) {
+      const all = document.querySelectorAll('div');
+      for (const n of all) {
+        const t = (n.innerText || '').trim();
+        if (t.length > 40 || !t) continue;
+        if (new RegExp('^\\s*' + no + '\\s*[.、．]\\s*[（(]').test(t)) { target = n; break; }
+      }
+    }
+
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const old = target.style.outline;
+    target.style.transition = 'outline-color .3s';
+    target.style.outline = '2px solid rgba(109,140,255,.85)';
+    target.style.outlineOffset = '4px';
+    setTimeout(() => { target.style.outline = old; }, 1400);
+  }
+
+  /* ============================================================
+     自动填入（只点选项、只写输入框，绝不碰提交）
+     ============================================================ */
+
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  function visible(node) {
+    if (!node.getClientRects) return true;
+    const r = node.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  }
+
+  function findQuestionEl(no) {
+    const re = new RegExp('^\\s*' + no + '\\s*[.、．]\\s*[（(]');
+
+    const known = document.querySelectorAll('.TiMu, .questionLi, .mark_item, .questionItem');
+    for (const b of known) {
+      if (re.test((b.textContent || '').trim())) return b;
+    }
+
+    let best = null;
+    let bestLen = Infinity;
+    document.querySelectorAll('div, li, section, article, form').forEach((n) => {
+      const t = (n.textContent || '').trim();
+      if (t.length < 6 || t.length > 2500) return;
+      if (!re.test(t)) return;
+      if (t.length < bestLen) { best = n; bestLen = t.length; }
+    });
+    return best;
+  }
+
+  /** 选项所在的行：从字母标签往上找到第一个"装得下选项文字"的祖先 */
+  function optionRowOf(letterNode) {
+    let cur = letterNode;
+    for (let i = 0; i < 4 && cur.parentElement; i++) {
+      cur = cur.parentElement;
+      const t = (cur.textContent || '').trim();
+      if (t.length >= 2 && t.length < 300) return cur;
+    }
+    return letterNode.parentElement || letterNode;
+  }
+
+  /**
+   * 这类页面的选项字母：<span class="choice406479667 num_option fl">A</span>
+   * 类名里有 num_option，直接按它定位，不依赖文字顺序。
+   */
+  function mapByNumOption(block) {
+    const map = {};
+    block.querySelectorAll('[class*="num_option"]').forEach((n) => {
+      const t = (n.textContent || '').replace(/\s/g, '');
+      const m = t.match(/^([A-H])[.、．]?$/);
+      if (!m) return;
+      const L = m[1];
+      if (map[L]) return;
+
+      const row = optionRowOf(n);
+      let text = (row.textContent || '').replace(/\s+/g, ' ').trim();
+      text = text.replace(new RegExp('^' + L + '\\s*[.、．)）]?\\s*'), '');
+
+      map[L] = { node: row, letter: L, text: L + '. ' + text.slice(0, 40) };
+    });
+    return map;
+  }
+
+  /** 找出题目里形如 "A. 对" 的选项节点，按字母建表 */
+  function findOptionMap(block) {
+    // 1) 有 num_option 标记：最可靠，直接返回
+    const byNum = mapByNumOption(block);
+    if (Object.keys(byNum).length >= 2) return byNum;
+
+    // 2) 文字里带字母
+    const raw = [];
+    block.querySelectorAll('li, label, div, span, p, a').forEach((n) => {
+      if (!n.textContent) return;
+      const t = n.textContent.replace(/\s+/g, ' ').trim();
+      if (!t || t.length > 80) return;
+      if (!/^[A-H][.、．)）]?\s*\S/.test(t)) return;
+      raw.push({ node: n, letter: t.charAt(0), text: t });
+    });
+
+    // 若某候选内部还包含另一个字母的候选，说明它是整组选项的容器，剔掉
+    const filtered = raw.filter((c) => !raw.some((o) => o !== c && o.letter !== c.letter && c.node.contains(o.node)));
+
+    const map = {};
+    filtered.forEach((c) => {
+      if (!map[c.letter] || c.text.length < map[c.letter].text.length) map[c.letter] = c;
+    });
+
+    if (Object.keys(map).length >= 2) return map;
+
+    // 3) 兜底：字母是 CSS 画出来的（textContent 里没有 A/B/C/D），按 DOM 结构猜
+    const kids = guessOptionGroup(block);
+    if (kids.length >= 2) {
+      kids.forEach((n, i) => {
+        const L = String.fromCharCode(65 + i);
+        map[L] = {
+          node: n,
+          letter: L,
+          text: L + '. ' + (n.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40),
+        };
+      });
+    }
+    return map;
+  }
+
+  /** 选项组：同一父节点下 2-8 个"短文本"兄弟节点，按出现顺序就是 A/B/C/D */
+  function guessOptionGroup(block) {
+    const cands = [];
+
+    block.querySelectorAll('ul, ol, div, dl').forEach((c) => {
+      const kids = Array.from(c.children);
+      if (kids.length < 2 || kids.length > 8) return;
+
+      for (let i = 0; i < kids.length; i++) {
+        const t = (kids[i].textContent || '').replace(/\s+/g, ' ').trim();
+        if (!t || t.length > 80) return;
+      }
+
+      let score = 1;
+      const cls = (classOf(c) + ' ' + kids.map(classOf).join(' ')).toLowerCase();
+      if (/option|answer|item|choice|radio|select|mark/.test(cls)) score += 3;
+      if (c.tagName === 'UL' || c.tagName === 'OL') score += 2;
+      if (kids.every((k) => k.tagName === 'LI')) score += 2;
+
+      cands.push({ kids, score });
+    });
+
+    cands.sort((a, b) => b.score - a.score);
+    return cands.length ? cands[0].kids : [];
+  }
+
+  function fire(node, type) {
+    node.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));
+  }
+
+  function classOf(el) {
+    return el && typeof el.className === 'string' ? el.className : '';
+  }
+
+  /** 越像"选项容器"分越高：li/label、class 带 option/answer、role=radio */
+  function scoreClickable(el) {
+    if (!el || !el.tagName) return 0;
+    const tag = el.tagName.toLowerCase();
+    const cls = classOf(el) + ' ' + ((el.getAttribute && el.getAttribute('role')) || '');
+    let s = 0;
+    if (tag === 'li' || tag === 'label') s += 3;
+    if (/option|answer|item|choice|radio|check|select/i.test(cls)) s += 2;
+    if (el.onclick) s += 2;
+    if (/radio|checkbox/i.test(cls)) s += 2;
+    return s;
+  }
+
+  /** 记录"是否被选中"的所有可观察信号：class、aria-checked、内部 checked 的 input */
+  function snapshot(el) {
+    const aria = (el.getAttribute && el.getAttribute('aria-checked')) || '';
+    const checked = el.querySelector && el.querySelector('input:checked') ? '1' : '0';
+    return classOf(el) + '|' + aria + '|' + checked;
+  }
+
+  function clickSequence(el) {
+    if (typeof PointerEvent === 'function') {
+      try { el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, view: window })); } catch (e) {}
+    }
+    fire(el, 'mousedown');
+    if (typeof PointerEvent === 'function') {
+      try { el.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, cancelable: true, view: window })); } catch (e) {}
+    }
+    fire(el, 'mouseup');
+    fire(el, 'click');
+  }
+
+  /**
+   * 点选一个选项。
+   * 先用 element.click()（对 inline onclick / jQuery 最友好），每次点击后对比
+   * class + aria-checked，变了就停 —— 避免多选被连点两次反而取消。
+   */
+  function activate(node) {
+    const chain = [];
+    let cur = node;
+    for (let i = 0; i < 3 && cur && cur.tagName && cur.tagName !== 'BODY'; i++) {
+      chain.push(cur);
+      cur = cur.parentElement;
+    }
+    const ordered = chain.slice().sort((a, b) => scoreClickable(b) - scoreClickable(a));
+
+    for (let i = 0; i < ordered.length; i++) {
+      const el = ordered[i];
+      const before = snapshot(el);
+      try { el.click(); } catch (e) {}
+      const after = snapshot(el);
+      if (after !== before) {
+        console.log('[作业助手] 选中 ' + el.tagName.toLowerCase() + ' ' + before + ' → ' + after);
+        return true;
+      }
+    }
+
+    // 没有原生 click 响应，补一套鼠标事件序列（只补最像的那个，避免重复点）
+    const first = ordered[0];
+    const before2 = snapshot(first);
+    clickSequence(first);
+    const after2 = snapshot(first);
+    if (after2 !== before2) {
+      console.log('[作业助手] 鼠标序列生效 ' + before2 + ' → ' + after2);
+      return true;
+    }
+
+    const input = node.querySelector && node.querySelector('input[type=radio],input[type=checkbox]');
+    if (input) {
+      if (!input.checked) input.click();
+      return !!input.checked;
+    }
+
+    console.warn('[作业助手] 点了但读不到选中状态 ' + before2 + ' → ' + after2);
+    return true;
+  }
+
+  /** 诊断用：点一下这个选项，回报前后状态 */
+  function probeClick(el, label) {
+    const before = snapshot(el);
+    try { el.click(); } catch (e) {}
+    const after = snapshot(el);
+    setStatus(
+      label + '：' + (before === after ? '点了没反应' : '点击生效') +
+      '　[' + before + '] → [' + after + ']',
+      false
+    );
+  }
+
+  function selectByLetter(block, letter) {
+    const map = findOptionMap(block);
+    const hit = map[letter];
+    if (!hit) return false;
+    return activate(hit.node);
+  }
+
+  function selectByJudge(block, truth) {
+    const map = findOptionMap(block);
+    const want = truth ? /对|正确|√|是/ : /错|错误|×|否/;
+    for (const L of Object.keys(map)) {
+      const body = map[L].text.slice(1).replace(/^[.、．)）\s]+/, '').trim();
+      if (body.length <= 12 && want.test(body)) return activate(map[L].node);
+    }
+    return selectByLetter(block, truth ? 'A' : 'B');
+  }
+
+  function isEditable(el) {
+    if (!el) return false;
+    if (el.isContentEditable) return true;
+    const attr = el.getAttribute && el.getAttribute('contenteditable');
+    return attr === '' || attr === 'true' || attr === 'plaintext-only';
+  }
+
+  /** iframe 里的富文本编辑器（UEditor 这类）：正文是 contenteditable 的 body */
+  function editorBodies(block) {
+    const out = [];
+    block.querySelectorAll('iframe').forEach((f) => {
+      if (!visible(f)) return;
+      let doc = null;
+      try { doc = f.contentDocument || (f.contentWindow && f.contentWindow.document); } catch (e) { return; }
+      const body = doc && doc.body;
+      if (body && isEditable(body)) out.push({ el: body, anchor: f });
+    });
+    return out;
+  }
+
+  function findInputs(block) {
+    const list = [];
+
+    Array.from(block.querySelectorAll('input, textarea, [contenteditable="true"]')).forEach((n) => {
+      if (n.tagName === 'INPUT') {
+        const t = (n.getAttribute('type') || 'text').toLowerCase();
+        if (['radio', 'checkbox', 'file', 'submit', 'button', 'hidden', 'image', 'range', 'color'].indexOf(t) >= 0) return;
+      }
+      if (!visible(n)) return;
+      list.push({ el: n, anchor: n });
+    });
+
+    editorBodies(block).forEach((x) => list.push(x));
+
+    // 按在页面里的先后顺序排，保证 第1空/第2空 对得上
+    list.sort((a, b) => {
+      const pos = a.anchor.compareDocumentPosition(b.anchor);
+      if (pos & 4) return -1; // FOLLOWING
+      if (pos & 2) return 1;  // PRECEDING
+      return 0;
+    });
+
+    return list.map((x) => x.el);
+  }
+
+  /** 如果是 UEditor，优先走它的 API，能保证内部状态和提交时读到的一致 */
+  function setViaEditorApi(body, value) {
+    try {
+      const frame = body.ownerDocument.defaultView && body.ownerDocument.defaultView.frameElement;
+      const UE = window.UE || (window.unsafeWindow && window.unsafeWindow.UE);
+      if (!UE || !UE.instants) return false;
+      const keys = Object.keys(UE.instants);
+      for (let i = 0; i < keys.length; i++) {
+        const ed = UE.instants[keys[i]];
+        if (!ed) continue;
+        if (ed.iframe === frame || ed.body === body || ed.bodyElement === body) {
+          if (typeof ed.setContent === 'function') {
+            ed.setContent(value);
+            return true;
+          }
+        }
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  function setFieldValue(field, value) {
+    const W = (field.ownerDocument && field.ownerDocument.defaultView) || window;
+    const inIframe = !!(field.ownerDocument && field.ownerDocument !== document);
+
+    // iframe 里的富文本编辑器（UEditor / wangEditor 等）
+    if (inIframe && isEditable(field)) {
+      if (setViaEditorApi(field, value)) return true;
+      try {
+        field.innerHTML = '<p>' + escape2(value) + '</p>';
+        field.dispatchEvent(new W.Event('input', { bubbles: true }));
+        field.dispatchEvent(new W.Event('keyup', { bubbles: true }));
+      } catch (e) {}
+      return true;
+    }
+
+    if (isEditable(field)) {
+      field.focus();
+      field.innerHTML = escape2(value).replace(/\n/g, '<br>');
+      try {
+        field.dispatchEvent(new InputEvent('input', { bubbles: true, data: value, inputType: 'insertText' }));
+      } catch (e) {
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      field.dispatchEvent(new Event('blur', { bubbles: true }));
+      return true;
+    }
+
+    const proto = field.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+    const desc = Object.getOwnPropertyDescriptor(proto, 'value');
+    if (desc && desc.set) desc.set.call(field, value);
+    else field.value = value;
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+    field.dispatchEvent(new Event('change', { bubbles: true }));
+    field.dispatchEvent(new Event('blur', { bubbles: true }));
+    return true;
+  }
+
+  function splitBlanks(answer) {
+    const s = String(answer || '');
+    if (!/[①②③④⑤⑥⑦⑧⑨]/.test(s)) return [];
+    return s.split(/[①②③④⑤⑥⑦⑧⑨]/).map((x) => x.trim()).filter(Boolean);
+  }
+
+  function fillInputs(block, answer) {
+    const fields = findInputs(block);
+    if (!fields.length) return { ok: false, reason: '没找到作答框' };
+
+    let parts = splitBlanks(answer);
+
+    // 没有 ①② 标记但有多个空时，按分号/换行试一次
+    if (!parts.length && fields.length >= 2) {
+      const alt = String(answer || '').split(/\n+|[；;]/).map((s) => s.trim()).filter(Boolean);
+      if (alt.length === fields.length) parts = alt;
+    }
+
+    if (fields.length >= 2 && parts.length >= 2) {
+      if (fields.length >= parts.length) {
+        parts.forEach((v, i) => setFieldValue(fields[i], v));
+        return { ok: true, reason: '填了 ' + parts.length + ' 空' };
+      }
+      setFieldValue(fields[0], String(answer || ''));
+      return { ok: false, reason: '空格数和答案对不上' };
+    }
+
+    setFieldValue(fields[0], String(answer || ''));
+    return { ok: true, reason: '' };
+  }
+
+  function judgeTruth(ans) {
+    const s = String(ans || '').trim().toUpperCase().replace(/\s/g, '');
+    if (['对', '正确', '√', 'T', 'TRUE', '是', 'A'].indexOf(s) >= 0) return true;
+    if (['错', '错误', '×', 'X', 'F', 'FALSE', '否', 'B'].indexOf(s) >= 0) return false;
+    return null;
+  }
+
+  /** 答案不是字母时，用选项文字反查（模型偶尔会把选项内容当答案） */
+  function selectByText(block, answer) {
+    const map = findOptionMap(block);
+    const key = String(answer || '').replace(/[\s。，,.;；:：]/g, '').slice(0, 10);
+    if (!key) return false;
+    const keys = Object.keys(map);
+    for (let i = 0; i < keys.length; i++) {
+      const body = map[keys[i]].text.slice(1).replace(/^[.、．)）\s]+/, '').replace(/[\s。，,.;；:：]/g, '');
+      if (!body) continue;
+      if (body.indexOf(key) >= 0 || key.indexOf(body) >= 0) return activate(map[keys[i]].node);
+    }
+    return false;
+  }
+
+  function fillQuestion(q) {
+    const block = findQuestionEl(q.no);
+    if (!block) return { ok: false, reason: '页面上没找到这题' };
+
+    const ans = String(q.answer || '').trim();
+    if (!ans || /存疑|信息不足/.test(ans)) return { ok: false, reason: '答案存疑，手动确认' };
+
+    let type = q.type || '';
+
+    // 以页面实际结构纠偏：有作答框没选项 → 按填空处理；有选项没作答框 → 按选择处理
+    const hasInput = findInputs(block).length > 0;
+    const hasOpt = Object.keys(findOptionMap(block)).length >= 2;
+
+    if (/填空|简答|论述|计算|分析|名词解释/.test(type) && !hasInput && hasOpt) {
+      type = '单选题';
+    } else if (/单选|多选|判断|选择/.test(type) && !hasOpt && hasInput) {
+      type = '填空题';
+    }
+
+    if (/判断/.test(type)) {
+      const truth = judgeTruth(ans);
+      if (truth === null) {
+        return selectByText(block, ans) ? { ok: true, reason: ans } : { ok: false, reason: '判断答案无法识别' };
+      }
+      if (selectByJudge(block, truth)) return { ok: true, reason: truth ? '选对' : '选错' };
+      return { ok: false, reason: '没找到 A/B 选项' };
+    }
+
+    if (/单选|多选|选择/.test(type)) {
+      if (/^[A-H]+$/i.test(ans)) {
+        let all = true;
+        const letters = ans.toUpperCase().split('');
+        letters.forEach((L) => { if (!selectByLetter(block, L)) all = false; });
+        if (all) return { ok: true, reason: letters.join('') };
+        if (selectByText(block, ans)) return { ok: true, reason: ans };
+        return { ok: false, reason: '没找到 ' + ans + ' 对应的选项' };
+      }
+      if (selectByText(block, ans)) return { ok: true, reason: ans };
+      if (hasInput) return fillInputs(block, ans);
+      return { ok: false, reason: '答案里没有选项字母，也没匹配到选项文字' };
+    }
+
+    if (/填空|简答|论述|计算|分析|名词解释/.test(type)) return fillInputs(block, ans);
+
+    if (hasInput) return fillInputs(block, ans);
+    if (/^[A-H]+$/i.test(ans)) {
+      let all = true;
+      ans.toUpperCase().split('').forEach((L) => { if (!selectByLetter(block, L)) all = false; });
+      return { ok: all, reason: all ? ans : '选项没对上' };
+    }
+    if (hasOpt && selectByText(block, ans)) return { ok: true, reason: ans };
+    return { ok: false, reason: '题型没识别出来' };
+  }
+
+  function fillOne(a) {
+    try {
+      const r = fillQuestion(a);
+      fillStatus[a.no] = r;
+      renderAnswers();
+
+      const elq = findQuestionEl(a.no);
+      if (elq && elq.scrollIntoView) elq.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      if (r.ok) {
+        setStatus('第 ' + a.no + ' 题：已填入 ' + (r.reason || ''), false);
+      } else {
+        setStatus('第 ' + a.no + ' 题没填上 — ' + (r.reason || '原因未知') + '。点「识别诊断」看它认到了什么。', false);
+      }
+    } catch (err) {
+      fillStatus[a.no] = { ok: false, reason: '出错：' + ((err && err.message) || err) };
+      renderAnswers();
+      setStatus('第 ' + a.no + ' 题出错：' + ((err && err.stack) || err), false);
+      console.error('[作业助手] fillOne 异常', err);
+    }
+  }
+
+  async function doFill() {
+    if (!answers.length) { setStatus('先点「出答案」', false); return; }
+    if (busy) return;
+
+    const autoScroll = shadow.querySelector('[data-role="autoscroll"]');
+    const shouldScroll = autoScroll ? autoScroll.checked : true;
+    const btn = shadow.querySelector('[data-act="fill"]');
+
+    busy = true;
+    if (btn) btn.disabled = true;
+
+    fillStatus = {};
+    let ok = 0;
+
+    for (let i = 0; i < answers.length; i++) {
+      const q = answers[i];
+      setStatus('正在填第 ' + q.no + ' 题…（' + (i + 1) + '/' + answers.length + '）', true);
+
+      let r;
+      try {
+        r = fillQuestion(q);
+      } catch (e) {
+        r = { ok: false, reason: '出错：' + ((e && e.message) || e) };
+        console.error('[作业助手] 第 ' + q.no + ' 题', e);
+      }
+
+      fillStatus[q.no] = r;
+      if (r.ok) ok++;
+      renderAnswers();
+
+      if (shouldScroll) {
+        const elq = findQuestionEl(q.no);
+        if (elq) elq.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        await sleep(420);
+      }
+    }
+
+    busy = false;
+    if (btn) btn.disabled = false;
+
+    setStatus('已填 ' + ok + '/' + answers.length + ' 题 · 核对后自己点提交', false);
+  }
+
+  /** 把脚本"看到了什么"直接打出来，用来定位为什么点不中 */
+  function doDiagnose() {
+    if (!answers.length) { setStatus('先点「出答案」，再诊断', false); return; }
+
+    const q = answers[0];
+    const block = findQuestionEl(q.no);
+    if (!block) { setStatus('诊断：页面上找不到第 ' + q.no + ' 题的容器', false); return; }
+
+    const map = findOptionMap(block);
+    const fields = findInputs(block);
+    const keys = Object.keys(map);
+    const tagOf = (n) => '<' + n.tagName.toLowerCase() + (classOf(n) ? ' class="' + classOf(n) + '"' : '') + '>';
+
+    const lines = [];
+    lines.push('第 ' + q.no + ' 题（' + (q.type || '未知') + '）答案：' + q.answer);
+    lines.push('题目容器：' + tagOf(block));
+    lines.push('识别到选项 ' + keys.length + ' 个：' + (keys.join(' ') || '无'));
+    keys.forEach(function (L) {
+      lines.push('  ' + L + ' → ' + tagOf(map[L].node) + ' ' + map[L].text.slice(0, 24));
+    });
+    lines.push('识别到作答框 ' + fields.length + ' 个（其中 iframe 编辑器 ' + editorBodies(block).length + ' 个）' +
+      (fields.length ? '：' + fields.map(function (f) {
+        return '<' + f.tagName.toLowerCase() + (f.getAttribute('type') ? ' type=' + f.getAttribute('type') : '') + '>';
+      }).join(' ') : ''));
+
+    const box = document.createElement('div');
+    box.className = 'warn';
+    box.style.whiteSpace = 'pre-wrap';
+    box.style.fontFamily = 'ui-monospace, Menlo, Consolas, monospace';
+    box.style.fontSize = '10.5px';
+    box.textContent = lines.join('\n');
+
+    if (keys.length) {
+      const bar = document.createElement('div');
+      bar.style.cssText = 'margin-top:7px;white-space:normal;display:flex;gap:5px;flex-wrap:wrap;';
+      keys.forEach(function (L) {
+        const b = document.createElement('button');
+        b.className = 'act';
+        b.style.cssText = 'padding:2px 8px;font-size:11px;';
+        b.textContent = '试点击 ' + L;
+        b.addEventListener('click', function () { probeClick(map[L].node, L); });
+        bar.appendChild(b);
+      });
+      box.appendChild(bar);
+    }
+
+    answersEl.insertBefore(box, answersEl.firstChild);
+
+    setStatus('诊断结果贴在最上面，点「试点击」可单独验证某个选项', false);
+  }
+
+  /* ---------------- 动作 ---------------- */
+
+  function doCapture() {
+    const list = captureFromPage();
+    if (!list.length) {
+      setMeta('抓不到');
+      setStatus('没识别到题目。可以手动把题目粘到上面，格式：1.（判断题）题目 A. 对 B. 错', false);
+      return;
+    }
+    questions = list;
+    qsEl.value = questionsToText(list);
+    fillStatus = {};
+    setMeta('已抓 ' + list.length + ' 题');
+    setStatus('确认题目无误后点「出答案」', false);
+  }
+
+  async function doSolve() {
+    if (busy) return;
+
+    const list = parseQuestions(qsEl.value);
+    if (!list.length) {
+      setStatus('输入框里没有题目，先抓取或粘贴。', false);
+      return;
+    }
+    if (!cfg.apiKey) {
+      showSettings();
+      setStatus('先填 API Key。', false);
+      return;
+    }
+
+    busy = true;
+    answers = [];
+    fillStatus = {};
+    renderAnswers();
+    setStatus('正在作答…（' + list.length + ' 题，约 10-20 秒）', true);
+    $('[data-act="solve"]').disabled = true;
+
+    try {
+      const content = await requestCompletion(buildPrompt(list));
+      const parsed = parseAnswers(content);
+      if (!parsed.length) {
+        answers = [];
+        renderAnswers();
+        setStatus('模型没返回可解析的答案，原文：' + String(content).slice(0, 120), false);
+      } else {
+        answers = parsed;
+        renderAnswers();
+        const gap = checkGaps(parsed);
+        setStatus(gap || ('完成 · ' + parsed.length + ' 题'), false);
+        if (gap) {
+          const w = document.createElement('div');
+          w.className = 'warn';
+          w.textContent = gap;
+          answersEl.insertBefore(w, answersEl.firstChild);
+        }
+      }
+    } catch (err) {
+      setStatus('');
+      const box = document.createElement('div');
+      box.className = 'err';
+      box.innerHTML = '<b>' + escape2((err && err.message) || '请求失败') + '</b>' +
+        (err && err.hint ? '<div style="margin-top:6px;line-height:1.75;">' + err.hint + '</div>' : '');
+      answersEl.appendChild(box);
+    } finally {
+      busy = false;
+      $('[data-act="solve"]').disabled = false;
+    }
+  }
+
+  function checkGaps(list) {
+    const nums = list.map((a) => Number(String(a.no).replace(/[^\d]/g, ''))).filter((n) => n > 0);
+    if (nums.length < 3) return '';
+    const set = new Set(nums);
+    const max = Math.max.apply(null, nums);
+    if (max > 200) return '';
+    const missing = [];
+    for (let i = 1; i <= max; i++) if (!set.has(i)) missing.push(i);
+    return missing.length && missing.length <= 10 ? '题号 ' + missing.join('、') + ' 缺失，核对一下再交。' : '';
+  }
+
+  /* ---------------- 设置 ---------------- */
+
+  function showSettings() {
+    $('[data-view="main"]').hidden = true;
+    $('[data-view="settings"]').hidden = false;
+    shadow.querySelectorAll('[data-cfg]').forEach((input) => {
+      input.value = cfg[input.dataset.cfg] || '';
+    });
+    const box = shadow.querySelector('[data-role="testresult"]');
+    if (box) { box.className = 'tr'; box.textContent = ''; }
+  }
+
+  function showMain() {
+    $('[data-view="settings"]').hidden = true;
+    $('[data-view="main"]').hidden = false;
+    const dot = shadow.querySelector('header .dot');
+    dot.classList.toggle('ok', !!cfg.apiKey);
+  }
+
+  function saveCfg() {
+    shadow.querySelectorAll('[data-cfg]').forEach((input) => {
+      cfg[input.dataset.cfg] = input.value.trim();
+    });
+    cfg.apiKey = cleanKey(cfg.apiKey);
+    cfg.baseUrl = cleanBase(cfg.baseUrl);
+    cfg.model = String(cfg.model || '').trim();
+
+    // 反写回去，让用户看见实际的 Key 长什么样（去没去掉空格引号一目了然）
+    const keyInput = shadow.querySelector('[data-cfg="apiKey"]');
+    if (keyInput) keyInput.value = cfg.apiKey;
+
+    Store.set('cfg', cfg);
+    showMain();
+
+    const looksBad = cfg.apiKey && !/^sk-/.test(cfg.apiKey);
+    if (looksBad) {
+      setStatus('已保存，但 Key 不是 sk- 开头的，建议检查一下', false);
+    } else {
+      setStatus('已保存配置', false);
+    }
+  }
+
+  async function doTest() {
+    const box = shadow.querySelector('[data-role="testresult"]');
+    const trial = {};
+    shadow.querySelectorAll('[data-cfg]').forEach((input) => {
+      trial[input.dataset.cfg] = input.value.trim();
+    });
+    trial.apiKey = cleanKey(trial.apiKey);
+    trial.baseUrl = cleanBase(trial.baseUrl);
+
+    if (!trial.apiKey || !trial.baseUrl || !trial.model) {
+      box.className = 'tr show bad';
+      box.textContent = 'Base URL、API Key、模型名三项都要填。';
+      return;
+    }
+
+    box.className = 'tr show';
+    box.textContent = '正在连接 ' + trial.baseUrl + ' …';
+
+    try {
+      const got = await requestCompletion(
+        [{ role: 'user', content: '只回复 ok 两个字符，不要多余内容' }],
+        Object.assign({}, cfg, trial),
+        { noJson: true }
+      );
+      box.className = 'tr show ok';
+      box.textContent = '连接正常，模型回复：' + (String(got).slice(0, 40) || '(空)') + ' —— 可以关掉设置去答题了。';
+    } catch (err) {
+      box.className = 'tr show bad';
+      box.innerHTML = '<b>' + escape2(err.message || '连接失败') + '</b>' +
+        (err.hint ? '<div style="margin-top:6px;">' + err.hint + '</div>' : '');
+    }
+  }
+
+  /* ---------------- 事件 ---------------- */
+
+  pill.addEventListener('click', () => {
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden) showMain();
+  });
+
+  panel.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const act = btn.dataset.act;
+    if (act === 'capture') doCapture();
+    else if (act === 'solve') doSolve();
+    else if (act === 'fill') doFill();
+    else if (act === 'diag') doDiagnose();
+    else if (act === 'settings') showSettings();
+    else if (act === 'back') showMain();
+    else if (act === 'savecfg') saveCfg();
+    else if (act === 'test') doTest();
+    else if (act === 'unbind') {
+      if (!confirm('解除绑定后，脚本在所有页面都会停止工作，确定？')) return;
+      bindSet(null);
+      location.reload();
+    }
+    else if (act === 'hide') { panel.hidden = true; }
+    else if (act === 'copyq') copy(qsEl.value, null);
+    else if (act === 'copya') {
+      const text = answers.length
+        ? answers.map((a) => a.no + '. ' + a.answer).join('\n')
+        : '';
+      if (text) copy(text, null);
+    }
+  });
+
+  /* ---------------- 启动 ---------------- */
+
+  function init() {
+    const hasQ = !!document.querySelector('.TiMu, .questionLi, .mark_item');
+    const isTop = (() => {
+      try { return window.top === window.self; } catch (e) { return false; }
+    })();
+
+    // 只在顶层页面、或确实含题目的 iframe 里挂面板
+    if (!isTop && !hasQ) return;
+
+    document.documentElement.appendChild(host);
+    showMain();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+
+  // 调试入口
+  window.__hwHelper = {
+    captureFromPage,
+    parseQuestions,
+    questionsToText,
+    parseAnswers,
+    fillQuestion,
+    fillOne,
+    findQuestionEl,
+    findOptionMap,
+    guessOptionGroup,
+    findInputs,
+    editorBodies,
+    setFieldValue,
+    doFill,
+    activate,
+    probeClick,
+    snapshot,
+  };
+})();
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  var SCRIPT_FILE = '作业抓题助手.user.js';
+
+  // 如果以后把脚本发布到 GitHub，把 raw 地址填在这里，本页双击打开也能一键安装。
+  // 例：https://raw.githubusercontent.com/yazhoujiucaihezi/<仓库>/main/作业抓题助手.user.js
+  var REMOTE_URL = '';
+
+  var STORES = {
+    chrome: {
+      name: 'Chrome',
+      url: 'https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo',
+      extId: 'dhdgffkkebhmkfjojejmpbldmpobfkfo',
+      hint: 'Chrome 应用商店在国内通常打不开。打不开就用 Edge 打开本页，或者给 Chrome 挂代理。'
+    },
+    edge: {
+      name: 'Edge',
+      url: 'https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd',
+      extId: 'iikmkjmpaadaobahmlepeloendndfphd',
+      hint: 'Edge 加载项商店国内可以直接访问，点进去点「获取」即可。'
+    },
+    firefox: {
+      name: 'Firefox',
+      url: 'https://addons.mozilla.org/firefox/addon/tampermonkey/',
+      extId: null,
+      hint: 'Firefox 用的是 Tampermonkey 官方扩展，装完同样能运行这个脚本。'
+    },
+    safari: {
+      name: 'Safari',
+      url: 'https://apps.apple.com/app/tampermonkey/id1482490089',
+      extId: null,
+      hint: 'Safari 需要先在「设置 → 扩展」里启用 Tampermonkey，并在「网站」里允许它访问作业站点。'
+    },
+    other: {
+      name: '其他浏览器',
+      url: 'https://www.tampermonkey.net/',
+      extId: null,
+      hint: '你的浏览器不在自动识别范围内，可以从官网手动选择对应版本。'
+    }
+  };
+
+  var $ = function (s) { return document.querySelector(s); };
+  var flashEl = $('#flash');
+  var flashTimer = null;
+
+  function flash(text) {
+    flashEl.textContent = text;
+    flashEl.classList.add('show');
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(function () { flashEl.classList.remove('show'); }, 2200);
+  }
+
+  /* ---------- 浏览器识别 ---------- */
+
+  function detectBrowser() {
+    var ua = navigator.userAgent || '';
+    var brands = (navigator.userAgentData && navigator.userAgentData.brands) || [];
+    var has = function (re) {
+      for (var i = 0; i < brands.length; i++) {
+        if (re.test(brands[i].brand)) return true;
+      }
+      return false;
+    };
+
+    if (has(/Microsoft Edge/i) || /Edg\//.test(ua)) return { key: 'edge', version: (ua.match(/Edg\/(\d+)/) || [])[1] || '' };
+    if (has(/Google Chrome/i) || (/Chrome\//.test(ua) && !/OPR\/|YaBrowser|Vivaldi/.test(ua))) return { key: 'chrome', version: (ua.match(/Chrome\/(\d+)/) || [])[1] || '' };
+    if (/Firefox\//.test(ua)) return { key: 'firefox', version: (ua.match(/Firefox\/(\d+)/) || [])[1] || '' };
+    if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) return { key: 'safari', version: (ua.match(/Version\/(\d+)/) || [])[1] || '' };
+    return { key: 'other', version: '' };
+  }
+
+  /* ---------- 扩展探测（尽力而为） ---------- */
+
+  function probeExtension(id) {
+    return new Promise(function (resolve) {
+      if (!id || !/^chrome-extension:/.test('chrome-extension:')) { resolve(null); return; }
+      var done = false;
+      var finish = function (v) { if (!done) { done = true; resolve(v); } };
+      try {
+        var img = new Image();
+        img.onload = function () { finish(true); };
+        img.onerror = function () { finish(false); };
+        img.src = 'chrome-extension://' + id + '/icons/icon128.png';
+      } catch (e) {
+        finish(false);
+        return;
+      }
+      setTimeout(function () { finish(false); }, 1000);
+    });
+  }
+
+  /* ---------- 页面装配 ---------- */
+
+  var browser = detectBrowser();
+  var store = STORES[browser.key] || STORES.other;
+  var isChromium = browser.key === 'chrome' || browser.key === 'edge';
+
+  function renderBrowser() {
+    var pill = $('#browserPill');
+    var label = store.name + (browser.version ? ' ' + browser.version : '');
+    if (isChromium) {
+      pill.querySelector('span').textContent = '检测到 ' + label + ' · 可一键接入';
+      pill.classList.remove('warn');
+    } else {
+      pill.querySelector('span').textContent = '检测到 ' + label + ' · 需手动安装';
+      pill.classList.add('warn');
+    }
+
+    $('#lead').innerHTML = isChromium
+      ? '浏览器认出来了，是 <b>' + label + '</b>。下面的按钮已经按你的浏览器准备好了，从第 1 步开始点就行。'
+      : '你的浏览器是 <b>' + label + '</b>。它同样能跑这个脚本，只是商店链接和启用方式不一样，步骤在下面。';
+  }
+
+  function renderStore() {
+    var btn = $('#storeBtn');
+    btn.href = store.url;
+    btn.textContent = '去 ' + store.name + ' 商店安装';
+    $('#tmHint').innerHTML = store.hint;
+    $('#step1').classList.add('active');
+  }
+
+  function setTmStatus(state) {
+    var tag = $('#tmTag');
+    if (state === 'yes') {
+      tag.className = 'tag ok';
+      tag.textContent = '已检测到';
+      $('#step1').classList.add('done');
+      $('#step2').classList.add('active');
+      $('#installHint').textContent = '篡改猴已就绪，直接点上面的按钮装脚本。';
+    } else if (state === 'no') {
+      tag.className = 'tag warn';
+      tag.textContent = '探测不到';
+      var base = store.hint || '';
+      $('#tmHint').innerHTML = base + (base ? '<br/>' : '') +
+        '<b>探测不到是常态</b>：浏览器默认不让网页看到扩展列表。只要你装了，第 2 步点下去能弹出篡改猴的安装页，就说明它是好的；也可以点「已装好，跳过检测」。';
+    } else {
+      tag.className = 'tag';
+      tag.textContent = '检测中';
+    }
+  }
+
+  async function runProbe(silent) {
+    if (!isChromium) { setTmStatus('no'); return; }
+    var found = await probeExtension(store.extId);
+    if (found) {
+      setTmStatus('yes');
+      if (!silent) flash('检测到篡改猴，可以进行第 2 步了');
+    } else {
+      setTmStatus('no');
+      if (!silent) flash('扩展对网页通常是隐身的，探测不到也正常');
+    }
+  }
+
+  /* ---------- 脚本来源：直接读页面里内联的源码，不再 fetch ---------- */
+
+  var scriptSrc = '';
+
+  function readInlineSource() {
+    var node = document.getElementById('userscript-src');
+    if (!node) return '';
+    var text = node.textContent || '';
+    text = text.replace(/^\s*\n/, '').replace(/\s+$/, '');
+    return text ? text + '\n' : '';
+  }
+
+  function loadScript() {
+    scriptSrc = readInlineSource();
+
+    if (!scriptSrc) {
+      $('#verTag').className = 'tag warn';
+      $('#verTag').textContent = '脚本缺失';
+      $('#installHint').innerHTML = '页面里没找到内联的脚本源码，可能文件被截断了。重新拿一份完整的 <code>install.html</code> 即可。';
+      return;
+    }
+
+    var v = (scriptSrc.match(/@version\s+([\d.]+)/) || [])[1] || '';
+    var kb = (scriptSrc.length / 1024).toFixed(0);
+    $('#verTag').className = 'tag ok';
+    $('#verTag').textContent = (v ? 'v' + v : '已就绪') + ' · ' + kb + ' KB · 内联';
+  }
+
+  /* ---------- 下载 ---------- */
+
+  function downloadScript() {
+    if (!scriptSrc) { flash('没有可下载的脚本内容'); return; }
+    var blob = new Blob([scriptSrc], { type: 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '作业抓题助手.user.js';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+    return true;
+  }
+
+  /* ---------- 安装 ---------- */
+
+  function installScript() {
+    var hint = $('#installHint');
+
+    // 1. 配了线上地址，直接打开（篡改猴会拦截）
+    if (REMOTE_URL) {
+      window.open(REMOTE_URL, '_blank');
+      hint.innerHTML = '已打开线上的 <code>.user.js</code>，篡改猴会弹出安装页。没弹出来的话，说明扩展没启用。';
+      return;
+    }
+
+    // 2. 通过 http/https 访问（node server.js 或部署到 Pages）
+    if (location.protocol === 'http:' || location.protocol === 'https:') {
+      window.location.href = encodeURI(SCRIPT_FILE);
+      setTimeout(function () {
+        if (!document.hidden) {
+          hint.innerHTML = '如果页面毫无反应，说明篡改猴没装好或被禁用 —— 回第 1 步检查。也可以点「复制完整代码」手动粘贴。';
+        }
+      }, 1200);
+      return;
+    }
+
+    // 3. file:// 双击打开：浏览器不给网页跳转拦截的机会，只能下载
+    downloadScript();
+    flash('已下载脚本，拖进篡改猴面板即可');
+    hint.innerHTML = '本地文件打开时，浏览器不允许网页直接拉起扩展的安装页，所以帮你把脚本下载下来了。拖到篡改猴的「实用工具 → 导入」里，或者新建脚本粘贴进去。';
+  }
+
+  async function copyCode() {
+    if (!scriptSrc) {
+      flash('没有可复制的脚本内容');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(scriptSrc);
+      flash('已复制 ' + (scriptSrc.length / 1024).toFixed(0) + ' KB，去篡改猴里粘贴吧');
+    } catch (e) {
+      var ta = document.createElement('textarea');
+      ta.value = scriptSrc;
+      ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); flash('已复制'); } catch (e2) { flash('复制失败，请用「下载 .user.js」'); }
+      ta.remove();
+    }
+  }
+
+  /* ---------- 事件 ---------- */
+
+  $('#storeBtn').addEventListener('click', function () {
+    // 去商店之后，用户回来时自动重探
+    var tries = 0;
+    var timer = setInterval(function () {
+      tries++;
+      runProbe(true);
+      if (tries >= 30) clearInterval(timer);
+    }, 2500);
+  });
+
+  $('#recheckBtn').addEventListener('click', function () { runProbe(false); });
+  $('#skipBtn').addEventListener('click', function () {
+    setTmStatus('yes');
+    flash('好，直接看第 2 步');
+    var s2 = $('#step2');
+    if (s2 && s2.scrollIntoView) s2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  $('#installBtn').addEventListener('click', installScript);
+  $('#copyBtn').addEventListener('click', copyCode);
+  $('#downloadBtn').addEventListener('click', function () {
+    downloadScript();
+    flash('已下载 .user.js');
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) runProbe(true);
+  });
+
+  /* ---------- 绑定页面 ---------- */
+
+  var bindTarget = null;
+
+  function parseTarget(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return null;
+    if (/^\*/.test(s)) return { error: '不能只用通配符，请填完整地址' };
+    if (!/^(https?|file):\/\//i.test(s)) return { error: '必须以 http:// 、https:// 或 file:// 开头' };
+
+    var noHash = s.split('#')[0];
+    var pathPart = noHash.split('?')[0];
+    var prefix;
+
+    if (/\*$/.test(pathPart)) {
+      prefix = pathPart;
+    } else {
+      var i = pathPart.lastIndexOf('/');
+      prefix = (i > 8 ? pathPart.slice(0, i) : pathPart) + '/*';
+    }
+    if (!/^[a-z]+:\/\/[^/*]+/i.test(prefix.replace(/\*$/, ''))) {
+      return { error: '地址里缺少主机名' };
+    }
+    return { full: noHash, prefix: prefix };
+  }
+
+  function buildLink(t) {
+    return t.full + '#hh-bind=' + btoa(encodeURIComponent(t.prefix));
+  }
+
+  function updateBindPreview() {
+    var input = $('#bindUrl');
+    var box = $('#bindPreview');
+    var go = $('#bindGo');
+    var cp = $('#bindCopy');
+    var t = parseTarget(input.value);
+
+    if (!t) {
+      box.innerHTML = '等待输入…';
+      go.disabled = true; cp.disabled = true; bindTarget = null;
+      return;
+    }
+    if (t.error) {
+      box.innerHTML = '<span class="bad">' + t.error + '</span>';
+      go.disabled = true; cp.disabled = true; bindTarget = null;
+      return;
+    }
+
+    bindTarget = t;
+    go.disabled = false; cp.disabled = false;
+    box.innerHTML = '将绑定到：<b>' + t.prefix + '</b>';
+
+    if (/^file:/i.test(t.full) && location.protocol !== 'file:') {
+      box.innerHTML += '<br/><span class="bad">file:// 地址无法从网页跳转过去：请直接打开那个文件，在篡改猴菜单里点「⚡ 绑定当前页面」</span>';
+      go.disabled = true;
+    }
+  }
+
+  $('#bindUrl').addEventListener('input', updateBindPreview);
+
+  $('#bindGo').addEventListener('click', function () {
+    if (!bindTarget) return;
+    window.open(buildLink(bindTarget), '_blank');
+  });
+
+  $('#bindCopy').addEventListener('click', async function () {
+    if (!bindTarget) return;
+    var link = buildLink(bindTarget);
+    try {
+      await navigator.clipboard.writeText(link);
+      flash('已复制绑定链接，粘贴到浏览器地址栏打开即可');
+    } catch (e) {
+      flash('复制失败，请手动选中链接');
+    }
+  });
+
+  /* ---------- 启动 ---------- */
+
+  renderBrowser();
+  renderStore();
+  if (!isChromium) {
+    setTmStatus('no');
+    $('#storeBtn').textContent = '从官网安装篡改猴';
+  }
+  runProbe(true);
+  loadScript();
+  updateBindPreview();
+})();
+</script>
+</body>
+</html>

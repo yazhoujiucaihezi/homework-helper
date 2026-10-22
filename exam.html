@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>数字电路基础 · 单元测验</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #eef0f5;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- 顶栏 ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    height: 50px;
+    display: flex; align-items: center;
+    background: #39415c;
+    color: #e8ebf5;
+    padding: 0 0 0 18px;
+  }
+  .tb-title { flex: 1; text-align: center; font-size: 15px; letter-spacing: 2px; }
+  .tb-right { display: flex; height: 100%; }
+  .tb-right button {
+    height: 100%; border: 0; cursor: pointer;
+    font-size: 13.5px; font-family: inherit;
+    padding: 0 22px; color: #e8ebf5; background: transparent;
+    transition: background .15s;
+  }
+  .tb-right .btn-save:hover { background: rgba(255,255,255,.09); }
+  .tb-right .btn-submit { background: #4a7dff; color: #fff; font-weight: 600; }
+  .tb-right .btn-submit:hover { background: #3d6ff0; }
+
+  /* ---------- 布局 ---------- */
+  .layout {
+    display: flex; gap: 18px;
+    max-width: 1180px;
+    margin: 18px auto;
+    padding: 0 18px 60px;
+    align-items: flex-start;
+  }
+  .content { flex: 1; min-width: 0; }
+
+  .paper {
+    background: #fff;
+    border-radius: 4px;
+    padding: 26px 34px 40px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .paper-head { border-bottom: 1px solid #eef0f5; padding-bottom: 16px; margin-bottom: 8px; }
+  .paper-head h1 { margin: 0 0 8px; font-size: 19px; font-weight: 600; color: #2b3242; }
+  .paper-head .meta { font-size: 12.5px; color: #8a91a3; }
+
+  /* ---------- 题型分节 ---------- */
+  .sec { margin-top: 26px; }
+  .sec > h2 {
+    font-size: 15px; font-weight: 600; color: #2b3242;
+    margin: 0 0 4px; padding-bottom: 10px;
+    border-bottom: 1px solid #f0f2f6;
+  }
+
+  /* ---------- 题目 ---------- */
+  .questionLi { padding: 18px 0 6px; border-bottom: 1px dashed #f0f2f6; }
+  .questionLi:last-child { border-bottom: 0; }
+
+  .qtitle { font-size: 12.5px; color: #9aa1b2; margin-bottom: 8px; }
+  .stem {
+    font-size: 14.5px; line-height: 1.85; color: #333;
+    margin-bottom: 12px; word-break: break-word;
+  }
+  .stem u { text-decoration: none; border-bottom: 1px solid #333; padding: 0 14px; }
+
+  /* ---------- 选项 ---------- */
+  .stem_answer { margin: 0 0 6px; }
+  .answerBg {
+    display: block;
+    padding: 9px 10px; margin-bottom: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background .13s;
+    outline: none;
+    overflow: hidden;
+  }
+  .answerBg:hover { background: #f5f7fb; }
+  .answerBg:focus-visible { box-shadow: 0 0 0 2px #c9d6ff; }
+
+  .num_option {
+    display: inline-block; vertical-align: middle;
+    width: 26px; height: 26px; line-height: 24px;
+    margin-right: 10px;
+    text-align: center;
+    font-size: 13px; color: #6b7385;
+    border: 1px solid #c8cdd9; border-radius: 50%;
+    background: #fff;
+    transition: .15s;
+  }
+  .answer_p {
+    display: inline-block; vertical-align: middle;
+    max-width: calc(100% - 40px);
+    font-size: 14.5px; line-height: 26px; color: #333;
+    word-break: break-word;
+  }
+
+  .answerBgSelected { background: #eef3ff; }
+  .answerBgSelected .num_option {
+    color: #fff; background: #4a7dff; border-color: #4a7dff;
+  }
+  .answerBgSelected .answer_p { color: #2b5fd9; }
+
+  /* ---------- 填空 ---------- */
+  .blank-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .blank-row::before {
+    content: "第" attr(data-no) "空";
+    flex: 0 0 46px;
+    font-size: 12.5px; color: #9aa1b2; line-height: 34px;
+  }
+  .editor {
+    flex: 1; min-width: 0;
+    border: 1px solid #d5dae4;
+    border-radius: 4px;
+    background: #fff;
+    transition: border-color .15s;
+    overflow: hidden;
+  }
+  .editor:focus-within { border-color: #4a7dff; box-shadow: 0 0 0 3px rgba(74,125,255,.1); }
+  .editor-frame {
+    display: block; width: 100%; height: 62px;
+    border: 0; background: transparent;
+  }
+
+  /* ---------- 右侧题号 ---------- */
+  .nav {
+    flex: 0 0 190px;
+    position: sticky; top: 68px;
+    background: #fff; border-radius: 4px;
+    padding: 16px 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .nav h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: #2b3242; }
+  .nav .grp { margin-bottom: 16px; }
+  .nav .grp:last-child { margin-bottom: 0; }
+  .nav .nums { display: flex; flex-wrap: wrap; gap: 6px; }
+  .nav .nums a {
+    width: 30px; height: 30px; line-height: 28px;
+    text-align: center; font-size: 12.5px;
+    color: #6b7385; text-decoration: none;
+    border: 1px solid #d5dae4; border-radius: 4px;
+    background: #fff;
+    transition: .13s;
+  }
+  .nav .nums a:hover { border-color: #4a7dff; color: #4a7dff; }
+  .nav .nums a.done { background: #4a7dff; border-color: #4a7dff; color: #fff; }
+
+  /* ---------- 结果 ---------- */
+  .mask {
+    position: fixed; inset: 0; z-index: 100;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(20, 24, 34, .55);
+  }
+  .mask.show { display: flex; }
+  .result {
+    width: 420px; max-width: calc(100vw - 32px);
+    background: #fff; border-radius: 10px;
+    padding: 26px 28px 22px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    text-align: center;
+  }
+  .result .score { font-size: 46px; font-weight: 700; color: #4a7dff; line-height: 1.1; }
+  .result .score small { font-size: 15px; color: #8a91a3; font-weight: 400; }
+  .result .line { font-size: 13px; color: #6b7385; margin: 8px 0 18px; }
+  .result .detail {
+    text-align: left; font-size: 12.5px; line-height: 1.9; color: #5a6274;
+    max-height: 220px; overflow-y: auto;
+    border-top: 1px solid #eef0f5; padding-top: 12px;
+  }
+  .result .detail b { color: #2b3242; }
+  .result .detail .bad { color: #e0554d; }
+  .result .detail .good { color: #2fa87a; }
+  .result button {
+    margin-top: 18px; width: 100%; height: 38px;
+    border: 0; border-radius: 6px; background: #4a7dff; color: #fff;
+    font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+  .result button:hover { background: #3d6ff0; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 40px; transform: translate(-50%, 10px);
+    background: rgba(35, 40, 54, .92); color: #fff;
+    font-size: 13px; padding: 9px 18px; border-radius: 6px;
+    opacity: 0; pointer-events: none; transition: .2s; z-index: 120;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  .foot { text-align: center; font-size: 11.5px; color: #a3aab8; padding: 22px 0 0; }
+  .foot a { color: #8a91a3; text-decoration: none; border-bottom: 1px solid #d5dae4; }
+
+  @media (max-width: 860px) {
+    .layout { flex-direction: column-reverse; }
+    .nav { position: static; width: 100%; flex: none; }
+    .nav .nums { flex-wrap: wrap; }
+    .paper { padding: 20px 18px 30px; }
+  }
+  @media print {
+    .topbar, .nav, .mask, .toast { display: none !important; }
+    .layout { display: block; padding: 0; }
+    .paper { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="tb-title">作业</div>
+  <div class="tb-right">
+    <button class="btn-save" id="btnSave" type="button">暂时保存</button>
+    <button class="btn-submit" id="btnSubmit" type="button">提交</button>
+  </div>
+</header>
+
+<div class="layout">
+  <main class="content" id="content">
+    <div class="paper">
+      <div class="paper-head">
+        <h1>数字电路基础 · 单元测验</h1>
+        <div class="meta">题量：10　　满分：100　　建议用时：30 分钟</div>
+      </div>
+
+      <!-- ================= 一、单选题 ================= -->
+      <section class="sec">
+        <h2>一、单选题（共 5 题，50 分）</h2>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q1" data-qid="1" data-type="choice">
+          <div class="qtitle">1.(单选题, 10分)</div>
+          <div class="stem">数字电路中，最基本的逻辑门不包括（　）</div>
+          <input type="hidden" id="answer1" name="answer1" value="" />
+          <div class="stem_answer qrDetail">
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="A" aria-checked="false" qid="1" qtype="1">
+              <span aria-hidden="true" data="true" class="choice1 num_option fl">A</span>
+              <span aria-hidden="true" class="fl answer_p">与门</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="B" aria-checked="false" qid="1" qtype="1">
+              <span aria-hidden="true" data="true" class="choice1 num_option fl">B</span>
+              <span aria-hidden="true" class="fl answer_p">或门</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="C" aria-checked="false" qid="1" qtype="1">
+              <span aria-hidden="true" data="true" class="choice1 num_option fl">C</span>
+              <span aria-hidden="true" class="fl answer_p">非门</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="D" aria-checked="false" qid="1" qtype="1">
+              <span aria-hidden="true" data="true" class="choice1 num_option fl">D</span>
+              <span aria-hidden="true" class="fl answer_p">触发器</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q2" data-qid="2" data-type="choice">
+          <div class="qtitle">2.(单选题, 10分)</div>
+          <div class="stem">十进制数 45 转换为二进制数是（　）</div>
+          <input type="hidden" id="answer2" name="answer2" value="" />
+          <div class="stem_answer qrDetail">
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="A" aria-checked="false" qid="2" qtype="1">
+              <span aria-hidden="true" data="true" class="choice2 num_option fl">A</span>
+              <span aria-hidden="true" class="fl answer_p">101101</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="B" aria-checked="false" qid="2" qtype="1">
+              <span aria-hidden="true" data="true" class="choice2 num_option fl">B</span>
+              <span aria-hidden="true" class="fl answer_p">101111</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="C" aria-checked="false" qid="2" qtype="1">
+              <span aria-hidden="true" data="true" class="choice2 num_option fl">C</span>
+              <span aria-hidden="true" class="fl answer_p">110101</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="D" aria-checked="false" qid="2" qtype="1">
+              <span aria-hidden="true" data="true" class="choice2 num_option fl">D</span>
+              <span aria-hidden="true" class="fl answer_p">100101</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q3" data-qid="3" data-type="choice">
+          <div class="qtitle">3.(单选题, 10分)</div>
+          <div class="stem">TTL 门电路的标准高电平约为（　）</div>
+          <input type="hidden" id="answer3" name="answer3" value="" />
+          <div class="stem_answer qrDetail">
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="A" aria-checked="false" qid="3" qtype="1">
+              <span aria-hidden="true" data="true" class="choice3 num_option fl">A</span>
+              <span aria-hidden="true" class="fl answer_p">0.3V</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="B" aria-checked="false" qid="3" qtype="1">
+              <span aria-hidden="true" data="true" class="choice3 num_option fl">B</span>
+              <span aria-hidden="true" class="fl answer_p">2.4V</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="C" aria-checked="false" qid="3" qtype="1">
+              <span aria-hidden="true" data="true" class="choice3 num_option fl">C</span>
+              <span aria-hidden="true" class="fl answer_p">3.6V</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="D" aria-checked="false" qid="3" qtype="1">
+              <span aria-hidden="true" data="true" class="choice3 num_option fl">D</span>
+              <span aria-hidden="true" class="fl answer_p">5V</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q4" data-qid="4" data-type="choice">
+          <div class="qtitle">4.(单选题, 10分)</div>
+          <div class="stem">下列电路中属于组合逻辑电路的是（　）</div>
+          <input type="hidden" id="answer4" name="answer4" value="" />
+          <div class="stem_answer qrDetail">
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="A" aria-checked="false" qid="4" qtype="1">
+              <span aria-hidden="true" data="true" class="choice4 num_option fl">A</span>
+              <span aria-hidden="true" class="fl answer_p">触发器</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="B" aria-checked="false" qid="4" qtype="1">
+              <span aria-hidden="true" data="true" class="choice4 num_option fl">B</span>
+              <span aria-hidden="true" class="fl answer_p">计数器</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="C" aria-checked="false" qid="4" qtype="1">
+              <span aria-hidden="true" data="true" class="choice4 num_option fl">C</span>
+              <span aria-hidden="true" class="fl answer_p">译码器</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="D" aria-checked="false" qid="4" qtype="1">
+              <span aria-hidden="true" data="true" class="choice4 num_option fl">D</span>
+              <span aria-hidden="true" class="fl answer_p">寄存器</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q5" data-qid="5" data-type="choice">
+          <div class="qtitle">5.(单选题, 10分)</div>
+          <div class="stem">逻辑函数 F = A + AB 化简后的结果是（　）</div>
+          <input type="hidden" id="answer5" name="answer5" value="" />
+          <div class="stem_answer qrDetail">
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="A" aria-checked="false" qid="5" qtype="1">
+              <span aria-hidden="true" data="true" class="choice5 num_option fl">A</span>
+              <span aria-hidden="true" class="fl answer_p">A</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="B" aria-checked="false" qid="5" qtype="1">
+              <span aria-hidden="true" data="true" class="choice5 num_option fl">B</span>
+              <span aria-hidden="true" class="fl answer_p">B</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="C" aria-checked="false" qid="5" qtype="1">
+              <span aria-hidden="true" data="true" class="choice5 num_option fl">C</span>
+              <span aria-hidden="true" class="fl answer_p">A + B</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="D" aria-checked="false" qid="5" qtype="1">
+              <span aria-hidden="true" data="true" class="choice5 num_option fl">D</span>
+              <span aria-hidden="true" class="fl answer_p">AB</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 二、判断题 ================= -->
+      <section class="sec">
+        <h2>二、判断题（共 3 题，30 分）</h2>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q6" data-qid="6" data-type="judge">
+          <div class="qtitle">6.(判断题, 10分)</div>
+          <div class="stem">所有的门电路只有高电平和低电平两种状态。</div>
+          <input type="hidden" id="answer6" name="answer6" value="" />
+          <div class="stem_answer qrDetail">
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="A" aria-checked="false" qid="6" qtype="3">
+              <span aria-hidden="true" data="true" class="choice6 num_option fl">A</span>
+              <span aria-hidden="true" class="fl answer_p">对</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="B" aria-checked="false" qid="6" qtype="3">
+              <span aria-hidden="true" data="true" class="choice6 num_option fl">B</span>
+              <span aria-hidden="true" class="fl answer_p">错</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q7" data-qid="7" data-type="judge">
+          <div class="qtitle">7.(判断题, 10分)</div>
+          <div class="stem">数字集成电路按开关元件不同，可分为 TTL 集成电路和 CMOS 集成电路两大类。</div>
+          <input type="hidden" id="answer7" name="answer7" value="" />
+          <div class="stem_answer qrDetail">
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="A" aria-checked="false" qid="7" qtype="3">
+              <span aria-hidden="true" data="true" class="choice7 num_option fl">A</span>
+              <span aria-hidden="true" class="fl answer_p">对</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="B" aria-checked="false" qid="7" qtype="3">
+              <span aria-hidden="true" data="true" class="choice7 num_option fl">B</span>
+              <span aria-hidden="true" class="fl answer_p">错</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q8" data-qid="8" data-type="judge">
+          <div class="qtitle">8.(判断题, 10分)</div>
+          <div class="stem">组合逻辑电路的输出仅取决于当前时刻的输入，与电路原有的状态无关。</div>
+          <input type="hidden" id="answer8" name="answer8" value="" />
+          <div class="stem_answer qrDetail">
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="A" aria-checked="false" qid="8" qtype="3">
+              <span aria-hidden="true" data="true" class="choice8 num_option fl">A</span>
+              <span aria-hidden="true" class="fl answer_p">对</span>
+            </div>
+            <div class="clearfix answerBg" onclick="addChoice(this)" tabindex="0" role="radio" aria-label="B" aria-checked="false" qid="8" qtype="3">
+              <span aria-hidden="true" data="true" class="choice8 num_option fl">B</span>
+              <span aria-hidden="true" class="fl answer_p">错</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 三、填空题 ================= -->
+      <section class="sec">
+        <h2>三、填空题（共 2 题，20 分）</h2>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q9" data-qid="9" data-type="fill">
+          <div class="qtitle">9.(填空题, 10分)</div>
+          <div class="stem">逻辑代数的三种基本运算分别是与、或、<u>____</u>。</div>
+          <div class="blank-row" data-no="1">
+            <div class="editor">
+              <iframe class="editor-frame" title="第1空输入区"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <div class="padB50 questionLi fontLabel singleQuesId" id="q10" data-qid="10" data-type="fill">
+          <div class="qtitle">10.(填空题, 10分)</div>
+          <div class="stem">十进制数 13 转换为二进制数是 <u>____</u>，转换为十六进制数是 <u>____</u>。</div>
+          <div class="blank-row" data-no="1">
+            <div class="editor">
+              <iframe class="editor-frame" title="第1空输入区"></iframe>
+            </div>
+          </div>
+          <div class="blank-row" data-no="2">
+            <div class="editor">
+              <iframe class="editor-frame" title="第2空输入区"></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="foot">
+        本页为配套演示页面，题目与分数仅用于功能测试 ·
+        <a href="https://github.com/yazhoujiucaihezi" target="_blank" rel="noopener">GitHub · yazhoujiucaihezi</a>
+      </div>
+    </div>
+  </main>
+
+  <aside class="nav">
+    <div class="grp">
+      <h3>一、单选题 (50分)</h3>
+      <div class="nums" data-grp="1">
+        <a href="#q1" data-n="1">1</a><a href="#q2" data-n="2">2</a><a href="#q3" data-n="3">3</a>
+        <a href="#q4" data-n="4">4</a><a href="#q5" data-n="5">5</a>
+      </div>
+    </div>
+    <div class="grp">
+      <h3>二、判断题 (30分)</h3>
+      <div class="nums" data-grp="6">
+        <a href="#q6" data-n="6">6</a><a href="#q7" data-n="7">7</a><a href="#q8" data-n="8">8</a>
+      </div>
+    </div>
+    <div class="grp">
+      <h3>三、填空题 (20分)</h3>
+      <div class="nums" data-grp="9">
+        <a href="#q9" data-n="9">9</a><a href="#q10" data-n="10">10</a>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="mask" id="mask">
+  <div class="result">
+    <div class="score" id="scoreNum">0<small> / 100</small></div>
+    <div class="line" id="scoreLine"></div>
+    <div class="detail" id="scoreDetail"></div>
+    <button type="button" id="btnClose">关闭</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* 标准答案 */
+  var KEY = {
+    1: 'D', 2: 'A', 3: 'B', 4: 'C', 5: 'A',
+    6: 'A', 7: 'A', 8: 'A',
+    9: ['非'], 10: ['1101', 'D']
+  };
+  var TYPE_NAME = { 1: '单选题', 6: '判断题', 9: '填空题' };
+  var FILL_QIDS = [9, 10];
+  var TOTAL = 10;
+
+  /* ---------- 初始化 iframe 编辑器 ---------- */
+  function initEditors() {
+    var frames = document.querySelectorAll('.editor-frame');
+    for (var i = 0; i < frames.length; i++) {
+      (function (frame) {
+        var doc = frame.contentDocument;
+        if (!doc) return;
+        doc.open();
+        doc.write(
+          '<!DOCTYPE html><html><head><meta charset="utf-8"><style>' +
+          'html,body{margin:0;padding:0;height:100%;}' +
+          'body{font:14px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;' +
+          'color:#333;padding:6px 10px;outline:none;box-sizing:border-box;}' +
+          'p{margin:0;}' +
+          '</style></head><body class="view contenteditable" contenteditable="true"><p><br></p></body></html>'
+        );
+        doc.close();
+        frame.contentDocument.body.addEventListener('input', markDone);
+      })(frames[i]);
+    }
+  }
+
+  /* ---------- 选中选项 ---------- */
+  window.addChoice = function (el) {
+    var qid = el.getAttribute('qid');
+    var sameQ = document.querySelectorAll('[qid="' + qid + '"][role="radio"]');
+    for (var i = 0; i < sameQ.length; i++) {
+      sameQ[i].setAttribute('aria-checked', 'false');
+      sameQ[i].classList.remove('answerBgSelected');
+    }
+    el.setAttribute('aria-checked', 'true');
+    el.classList.add('answerBgSelected');
+
+    var hidden = document.getElementById('answer' + qid);
+    if (hidden) hidden.value = el.getAttribute('aria-label');
+    markDone();
+  };
+
+  /* 键盘可操作（原生 radio 的语义） */
+  document.addEventListener('keydown', function (e) {
+    var el = document.activeElement;
+    if (!el || el.getAttribute('role') !== 'radio') return;
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      el.click();
+    }
+  });
+
+  /* ---------- 已完成标记 ---------- */
+  function answered(qid) {
+    if (FILL_QIDS.indexOf(qid) >= 0) {
+      var box = document.getElementById('q' + qid);
+      var bodies = box.querySelectorAll('.editor-frame');
+      for (var i = 0; i < bodies.length; i++) {
+        var b = bodies[i].contentDocument && bodies[i].contentDocument.body;
+        if (b && b.textContent.trim()) return true;
+      }
+      return false;
+    }
+    var h = document.getElementById('answer' + qid);
+    return h && h.value !== '';
+  }
+
+  function markDone() {
+    var links = document.querySelectorAll('.nav .nums a');
+    for (var i = 0; i < links.length; i++) {
+      var n = Number(links[i].getAttribute('data-n'));
+      links[i].classList.toggle('done', answered(n));
+    }
+  }
+  document.addEventListener('click', function () { setTimeout(markDone, 0); }, true);
+
+  /* ---------- 取作答 ---------- */
+  function fillText(qid) {
+    var box = document.getElementById('q' + qid);
+    var frames = box.querySelectorAll('.editor-frame');
+    var out = [];
+    for (var i = 0; i < frames.length; i++) {
+      var b = frames[i].contentDocument && frames[i].contentDocument.body;
+      out.push(b ? b.textContent.trim() : '');
+    }
+    return out;
+  }
+
+  /* ---------- 提交判分 ---------- */
+  function submit() {
+    var score = 0;
+    var lines = [];
+
+    for (var qid = 1; qid <= TOTAL; qid++) {
+      var full = 10;
+      var got = 0;
+      var mine = '';
+      var right = '';
+
+      if (FILL_QIDS.indexOf(qid) >= 0) {
+        var vals = fillText(qid);
+        var key = KEY[qid];
+        var hit = 0;
+        for (var k = 0; k < key.length; k++) {
+          if ((vals[k] || '').replace(/\s/g, '') === key[k]) hit++;
+        }
+        got = Math.round(full * hit / key.length);
+        mine = vals.join(' / ') || '（空）';
+        right = key.join(' / ');
+      } else {
+        var h = document.getElementById('answer' + qid);
+        mine = h && h.value ? h.value : '（未作答）';
+        right = KEY[qid];
+        got = mine === right ? full : 0;
+      }
+
+      score += got;
+      var cls = got === full ? 'good' : 'bad';
+      lines.push(
+        '<b>' + qid + '.</b> 你的答案：<span class="' + cls + '">' + mine +
+        '</span>　正确：' + right + '　<span class="' + cls + '">' + got + '/' + full + '</span>'
+      );
+    }
+
+    document.getElementById('scoreNum').innerHTML = score + '<small> / 100</small>';
+    document.getElementById('scoreLine').textContent =
+      score === 100 ? '全对，这页没白做。' :
+      score >= 80 ? '基本掌握，错的几道看下解析。' :
+      score >= 60 ? '刚过线，回去把门电路和卡诺图再看一遍。' :
+      '还差得多，先把基本概念过一遍。';
+    document.getElementById('scoreDetail').innerHTML = lines.join('<br/>');
+    document.getElementById('mask').classList.add('show');
+  }
+
+  /* ---------- 暂时保存 ---------- */
+  function save() {
+    var data = { choice: {}, fill: {}, at: Date.now() };
+    for (var qid = 1; qid <= TOTAL; qid++) {
+      if (FILL_QIDS.indexOf(qid) >= 0) data.fill[qid] = fillText(qid);
+      else {
+        var h = document.getElementById('answer' + qid);
+        data.choice[qid] = h ? h.value : '';
+      }
+    }
+    try {
+      localStorage.setItem('demo-exam-progress', JSON.stringify(data));
+      toast('已保存到本机（' + new Date().toLocaleTimeString('zh-CN') + '）');
+    } catch (e) {
+      toast('保存失败：浏览器禁用了本地存储');
+    }
+  }
+
+  function restore() {
+    var raw = null;
+    try { raw = localStorage.getItem('demo-exam-progress'); } catch (e) { return; }
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+
+    Object.keys(data.choice || {}).forEach(function (qid) {
+      var v = data.choice[qid];
+      if (!v) return;
+      var el = document.querySelector('[qid="' + qid + '"][aria-label="' + v + '"]');
+      if (el) window.addChoice(el);
+    });
+
+    Object.keys(data.fill || {}).forEach(function (qid) {
+      var vals = data.fill[qid] || [];
+      var frames = document.querySelectorAll('#q' + qid + ' .editor-frame');
+      for (var i = 0; i < frames.length && i < vals.length; i++) {
+        var b = frames[i].contentDocument && frames[i].contentDocument.body;
+        if (b && vals[i]) b.innerHTML = '<p>' + vals[i] + '</p>';
+      }
+    });
+
+    markDone();
+    if (Object.keys(data.choice || {}).length || Object.keys(data.fill || {}).length) {
+      toast('已恢复上次的作答');
+    }
+  }
+
+  /* ---------- toast ---------- */
+  var toastTimer = null;
+  function toast(msg) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2000);
+  }
+
+  /* ---------- 事件 ---------- */
+  document.getElementById('btnSave').addEventListener('click', save);
+  document.getElementById('btnSubmit').addEventListener('click', function () {
+    var done = 0;
+    for (var qid = 1; qid <= TOTAL; qid++) if (answered(qid)) done++;
+    if (done < TOTAL && !confirm('还有 ' + (TOTAL - done) + ' 题没作答，确定提交？')) return;
+    submit();
+  });
+  document.getElementById('btnClose').addEventListener('click', function () {
+    document.getElementById('mask').classList.remove('show');
+  });
+
+  /* ---------- 启动 ---------- */
+  initEditors();
+  restore();
+  markDone();
+})();
+</script>
+</body>
+</html>
